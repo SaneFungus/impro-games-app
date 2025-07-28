@@ -948,10 +948,10 @@
         // Made init async
         // Start with loading spinner
         gamesContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                </div>
-            `
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        `
 
         try {
           await loadGameData() // Wait for data to load
@@ -986,8 +986,8 @@
 
           // Create new category filters
           categoryFilters.innerHTML = `
-                    <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
-                `
+                <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
+            `
 
           categories.forEach((category) => {
             const count = gameData.filter(
@@ -1016,8 +1016,8 @@
 
           // Create new focus filters
           focusFilters.innerHTML = `
-                    <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
-                `
+                <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
+            `
 
           focuses.forEach((focus) => {
             const count = gameData.filter(
@@ -1269,9 +1269,18 @@
               a.glowny_fokus.localeCompare(b.glowny_fokus, "pl")
             )
           default:
-            return sorted.sort((a, b) =>
-              a.nr_katalogowy.localeCompare(b.nr_katalogowy)
-            )
+            // Handle both string and number types for nr_katalogowy
+            return sorted.sort((a, b) => {
+              const aNum =
+                typeof a.nr_katalogowy === "string"
+                  ? a.nr_katalogowy
+                  : String(a.nr_katalogowy)
+              const bNum =
+                typeof b.nr_katalogowy === "string"
+                  ? b.nr_katalogowy
+                  : String(b.nr_katalogowy)
+              return aNum.localeCompare(bNum, undefined, { numeric: true })
+            })
         }
       }
 
@@ -1288,55 +1297,49 @@
       function renderGames(games) {
         if (games.length === 0) {
           gamesContainer.innerHTML = `
-                    <div class="no-results">
-                        <div class="no-results-icon">🎭</div>
-                        <div class="no-results-title">Brak wyników</div>
-                        <div class="no-results-text">Spróbuj zmienić kryteria wyszukiwania</div>
-                    </div>
-                `
+                <div class="no-results">
+                    <div class="no-results-icon">🎭</div>
+                    <div class="no-results-title">Brak wyników</div>
+                    <div class="no-results-text">Spróbuj zmienić kryteria wyszukiwania</div>
+                </div>
+            `
           return
         }
 
         gamesContainer.innerHTML = games
           .map(
             (game) => `
-                <article class="game-card ${
-                  selectedGames.has(game.nr_katalogowy) ? "selected" : ""
-                }" 
-                         data-id="${game.nr_katalogowy}">
-                    <input type="checkbox" class="game-checkbox" 
-                           id="game-checkbox-${game.nr_katalogowy}"
-                           ${
-                             selectedGames.has(game.nr_katalogowy)
-                               ? "checked"
-                               : ""
-                           }>
-                    
-                    <header class="game-header">
-                        <div class="game-number">#${game.nr_katalogowy}</div>
-                        <div class="game-titles">
-                            <h2 class="game-title">${game.nazwa}</h2>
-                            <div class="game-title-en">${
-                              game.nazwa_ang || ""
-                            }</div>
-                        </div>
-                    </header>
-                    
-                    <p class="game-description">${game.opis}</p>
-                    
-                    <footer class="game-meta">
-                        <div class="game-tags">
-                            <span class="game-tag category">${
-                              game.kategoria
-                            }</span>
-                            <span class="game-tag">${game.glowny_fokus}</span>
-                        </div>
-                        <div class="game-players">${
-                          game.minimalna_liczba_graczy
-                        }+ graczy</div>
-                    </footer>
-                </article>
-            `
+            <article class="game-card ${
+              selectedGames.has(game.nr_katalogowy) ? "selected" : ""
+            }" 
+                     data-id="${game.nr_katalogowy}">
+                <input type="checkbox" class="game-checkbox" 
+                       id="game-checkbox-${game.nr_katalogowy}"
+                       ${
+                         selectedGames.has(game.nr_katalogowy) ? "checked" : ""
+                       }>
+                
+                <header class="game-header">
+                    <div class="game-number">#${game.nr_katalogowy}</div>
+                    <div class="game-titles">
+                        <h2 class="game-title">${game.nazwa}</h2>
+                        <div class="game-title-en">${game.nazwa_ang || ""}</div>
+                    </div>
+                </header>
+                
+                <p class="game-description">${game.opis}</p>
+                
+                <footer class="game-meta">
+                    <div class="game-tags">
+                        <span class="game-tag category">${game.kategoria}</span>
+                        <span class="game-tag">${game.glowny_fokus}</span>
+                    </div>
+                    <div class="game-players">${
+                      game.minimalna_liczba_graczy
+                    }+ graczy</div>
+                </footer>
+            </article>
+        `
           )
           .join("")
 
@@ -1476,6 +1479,7 @@
         // For now, it's called on modal close, which might be okay.
         // If you want "Export" button in modal to trigger it, move handleExport() call there.
         // For now, keeping current behavior.
+        handleExport()
       }
 
       function handleExport() {
