@@ -917,47 +917,58 @@
 
         // Function to dynamically update filters based on loaded data
         function updateFiltersFromData() {
-            // Get unique categories
-            const categories = [...new Set(gameData.map(game => game.kategoria))].sort();
-            const categoryFilters = document.getElementById('categoryFilters');
-            
-            // Keep the "all" button and add dynamic categories
-            const allButton = categoryFilters.querySelector('[data-filter="all"]');
-            categoryFilters.innerHTML = '';
-            categoryFilters.appendChild(allButton);
-            
-            categories.forEach(category => {
-                const count = gameData.filter(game => game.kategoria === category).length;
-                const button = document.createElement('button');
-                button.className = 'filter-btn';
-                button.dataset.filter = category;
-                button.innerHTML = `${category.toLowerCase()} <span class="count">(${count})</span>`;
-                button.addEventListener('click', handleFilter);
-                categoryFilters.appendChild(button);
-            });
+            try {
+                // Get unique categories
+                const categories = [...new Set(gameData.map(game => game.kategoria))].sort();
+                const categoryFilters = document.getElementById('categoryFilters');
+                
+                if (!categoryFilters) {
+                    console.error('Category filters container not found');
+                    return;
+                }
+                
+                // Create new category filters
+                categoryFilters.innerHTML = `
+                    <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
+                `;
+                
+                categories.forEach(category => {
+                    const count = gameData.filter(game => game.kategoria === category).length;
+                    const button = document.createElement('button');
+                    button.className = 'filter-btn';
+                    button.dataset.filter = category;
+                    button.innerHTML = `${category.toLowerCase()} <span class="count">(${count})</span>`;
+                    categoryFilters.appendChild(button);
+                });
 
-            // Get unique focuses
-            const focuses = [...new Set(gameData.map(game => game.glowny_fokus))].sort();
-            const focusFilters = document.getElementById('focusFilters');
-            
-            // Keep the "all" button and add dynamic focuses
-            const allFocusButton = focusFilters.querySelector('[data-filter="all"]');
-            focusFilters.innerHTML = '';
-            focusFilters.appendChild(allFocusButton);
-            
-            focuses.forEach(focus => {
-                const count = gameData.filter(game => game.glowny_fokus === focus).length;
-                const button = document.createElement('button');
-                button.className = 'filter-btn';
-                button.dataset.filter = focus;
-                button.innerHTML = `${focus.toLowerCase()} <span class="count">(${count})</span>`;
-                button.addEventListener('click', handleFilter);
-                focusFilters.appendChild(button);
-            });
-            
-            // Update "all" button counts
-            allButton.innerHTML = `wszystkie <span class="count">(${gameData.length})</span>`;
-            allFocusButton.innerHTML = `wszystkie <span class="count">(${gameData.length})</span>`;
+                // Get unique focuses
+                const focuses = [...new Set(gameData.map(game => game.glowny_fokus))].sort();
+                const focusFilters = document.getElementById('focusFilters');
+                
+                if (!focusFilters) {
+                    console.error('Focus filters container not found');
+                    return;
+                }
+                
+                // Create new focus filters
+                focusFilters.innerHTML = `
+                    <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
+                `;
+                
+                focuses.forEach(focus => {
+                    const count = gameData.filter(game => game.glowny_fokus === focus).length;
+                    const button = document.createElement('button');
+                    button.className = 'filter-btn';
+                    button.dataset.filter = focus;
+                    button.innerHTML = `${focus.toLowerCase()} <span class="count">(${count})</span>`;
+                    focusFilters.appendChild(button);
+                });
+                
+                console.log(`✅ Updated filters: ${categories.length} categories, ${focuses.length} focuses`);
+                
+            } catch (error) {
+                console.error('❌ Error updating filters:', error);
+            }
         }
 
         // Function to load game data from external JSON file
@@ -996,19 +1007,14 @@
             }
         }
 
-        // Event listeners setup
-        function setupEventListeners() {
+        // Basic event listeners setup (doesn't depend on dynamic filters)
+        function setupBasicEventListeners() {
             // Search functionality
             searchInput.addEventListener('input', handleSearch);
             searchClear.addEventListener('click', clearSearch);
             
             // Filter toggle
             filterToggle.addEventListener('click', toggleFilters);
-            
-            // Filter buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', handleFilter);
-            });
             
             // Sort functionality
             sortSelect.addEventListener('change', handleSort);
@@ -1026,6 +1032,18 @@
             exportModal.addEventListener('click', (e) => {
                 if (e.target === exportModal) hideExportModal();
             });
+        }
+
+        // Filter event listeners setup (for dynamically generated filters)
+        function setupFilterEventListeners() {
+            // Filter buttons - these are generated dynamically so we add listeners after creation
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                // Remove existing listeners to avoid duplicates
+                btn.removeEventListener('click', handleFilter);
+                btn.addEventListener('click', handleFilter);
+            });
+            
+            console.log('✅ Filter event listeners setup complete');
         }
 
         function toggleFilters() {
@@ -1056,9 +1074,8 @@
             }
             
             // Apply category filters
-            const activeFilters = Array.from(document.querySelectorAll('#categoryFilters .filter-btn.active'))
-                .map(btn => btn.dataset.filter)
-                .filter(filter => filter !== 'all');
+            const activeFilters = Array.from(document.querySelectorAll('#categoryFilters .filter-btn.active:not([data-filter="all"])'))
+                .map(btn => btn.dataset.filter);
             
             if (activeFilters.length > 0) {
                 filtered = filtered.filter(game => {
@@ -1067,9 +1084,8 @@
             }
             
             // Apply focus filters
-            const activeFocusFilters = Array.from(document.querySelectorAll('#focusFilters .filter-btn.active'))
-                .map(btn => btn.dataset.filter)
-                .filter(filter => filter !== 'all');
+            const activeFocusFilters = Array.from(document.querySelectorAll('#focusFilters .filter-btn.active:not([data-filter="all"])'))
+                .map(btn => btn.dataset.filter);
             
             if (activeFocusFilters.length > 0) {
                 filtered = filtered.filter(game => {
@@ -1078,9 +1094,8 @@
             }
             
             // Apply player filters
-            const activePlayerFilters = Array.from(document.querySelectorAll('#playerFilters .filter-btn.active'))
-                .map(btn => btn.dataset.filter)
-                .filter(filter => filter !== 'all');
+            const activePlayerFilters = Array.from(document.querySelectorAll('#playerFilters .filter-btn.active:not([data-filter="all"])'))
+                .map(btn => btn.dataset.filter);
             
             if (activePlayerFilters.length > 0) {
                 filtered = filtered.filter(game => {
@@ -1192,12 +1207,28 @@
         function handleFilter(e) {
             const btn = e.target;
             const filterGroup = btn.closest('.filters');
+            const isAllButton = btn.dataset.filter === 'all';
             
-            // Remove active from all in group
-            filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            
-            // Add active to clicked
-            btn.classList.add('active');
+            if (isAllButton) {
+                // If "all" button clicked, deactivate all others in group
+                filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } else {
+                // If specific filter clicked, deactivate "all" button and toggle this one
+                const allButton = filterGroup.querySelector('[data-filter="all"]');
+                if (allButton) {
+                    allButton.classList.remove('active');
+                }
+                
+                // Toggle the clicked button
+                btn.classList.toggle('active');
+                
+                // If no filters are active, activate "all" button
+                const activeFilters = filterGroup.querySelectorAll('.filter-btn.active:not([data-filter="all"])');
+                if (activeFilters.length === 0 && allButton) {
+                    allButton.classList.add('active');
+                }
+            }
             
             filterAndSort();
         }
