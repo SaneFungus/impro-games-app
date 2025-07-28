@@ -1,1169 +1,1324 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Impro Games — Mobile Neo-Bauhaus</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-black: #000000;
+        --primary-white: #ffffff;
+        --accent-red: #ff0000;
+        --light-gray: #f8f8f8;
+        --medium-gray: #666666;
+        --border-gray: #e0e0e0;
+        --hover-gray: #f0f0f0;
+        --success-green: #00ff00;
+      }
+
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        background: var(--primary-white);
+        color: var(--primary-black);
+        line-height: 1.4;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* MOBILE-FIRST HEADER */
+      .header {
+        border-bottom: 1px solid var(--primary-black);
+        padding: 20px 15px;
+        background: var(--primary-white);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-weight: 300;
+        font-size: 1.8rem;
+        letter-spacing: -0.02em;
+        line-height: 0.9;
+      }
+
+      .header-stats {
+        text-align: right;
+        font-size: 10px;
+        font-weight: 400;
+        color: var(--medium-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        line-height: 1.4;
+      }
+
+      .red-accent {
+        color: var(--accent-red);
+      }
+
+      /* MOBILE SEARCH */
+      .search-section {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-gray);
+        background: var(--light-gray);
+      }
+
+      .search-container {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .search-input-wrapper {
+        position: relative;
+      }
+
+      .search-input {
+        width: 100%;
+        border: none;
+        border-bottom: 2px solid var(--primary-black);
+        background: transparent;
+        padding: 10px 0;
+        font-size: 16px; /* Prevents zoom on iOS */
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 400;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-bottom-color: var(--accent-red);
+      }
+
+      .search-clear {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--medium-gray);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        touch-action: manipulation;
+      }
+
+      .search-input:not(:placeholder-shown) + .search-clear {
+        opacity: 1;
+      }
+
+      .search-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--medium-gray);
+        margin-top: 10px;
+      }
+
+      .results-count {
+        color: var(--accent-red);
+      }
+
+      /* MOBILE FILTERS */
+      .filters-container {
+        background: var(--primary-white);
+        border-bottom: 1px solid var(--border-gray);
+      }
+
+      .filter-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: none;
+        border: none;
+        width: 100%;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .filter-toggle-icon {
+        transition: transform 0.3s ease;
+      }
+
+      .filter-toggle.active .filter-toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      .filters-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .filters-content.open {
+        max-height: 500px;
+      }
+
+      .filters-section {
+        border-top: 1px solid var(--border-gray);
+        padding: 15px;
+      }
+
+      .filters-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--medium-gray);
+        margin-bottom: 10px;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--primary-black);
+        margin-bottom: 15px;
+      }
+
+      .filter-btn {
+        background: var(--primary-white);
+        border: none;
+        padding: 12px 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        touch-action: manipulation;
+        text-align: center;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--primary-black);
+        color: var(--primary-white);
+      }
+
+      .filter-btn .count {
+        font-size: 8px;
+        opacity: 0.7;
+        margin-left: 3px;
+      }
+
+      /* MOBILE SORT */
+      .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 15px;
+        margin-bottom: 15px;
+      }
+
+      .sort-label {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--medium-gray);
+        white-space: nowrap;
+      }
+
+      .sort-select {
+        flex: 1;
+        border: 1px solid var(--border-gray);
+        background: var(--primary-white);
+        padding: 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      /* MOBILE EXPORT BAR */
+      .export-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--primary-black);
+        color: var(--primary-white);
+        padding: 15px;
+        z-index: 200;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+
+      .export-bar.visible {
+        transform: translateY(0);
+      }
+
+      .export-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .export-info {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .export-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .export-btn {
+        background: var(--accent-red);
+        color: var(--primary-white);
+        border: none;
+        padding: 8px 12px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .export-btn.secondary {
+        background: var(--primary-white);
+        color: var(--primary-black);
+      }
+
+      /* MOBILE GAMES LIST */
+      .games-container {
+        padding-bottom: 80px; /* Space for export bar */
+      }
+
+      .game-card {
+        background: var(--primary-white);
+        border-bottom: 1px solid var(--border-gray);
+        padding: 20px 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        position: relative;
+      }
+
+      .game-card:hover {
+        background: var(--hover-gray);
+      }
+
+      .game-card.selected {
+        background: var(--light-gray);
+        border-left: 4px solid var(--accent-red);
+        padding-left: 11px;
+      }
+
+      .game-checkbox {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .game-header {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 15px;
+        align-items: start;
+        margin-bottom: 15px;
+      }
+
+      .game-number {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--medium-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .game-titles {
+        min-width: 0;
+        margin-right: 25px; /* Space for checkbox */
+      }
+
+      .game-title {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.2;
+        margin-bottom: 3px;
+      }
+
+      .game-title-en {
+        font-size: 12px;
+        font-weight: 300;
+        color: var(--medium-gray);
+        font-style: italic;
+      }
+
+      .game-description {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .game-meta {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-gray);
+      }
+
+      .game-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .game-tag {
+        font-size: 9px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--medium-gray);
+        background: var(--light-gray);
+        padding: 4px 8px;
+        border-radius: 2px;
+      }
+
+      .game-tag.category {
+        color: var(--accent-red);
+        background: var(--primary-white);
+        border: 1px solid var(--accent-red);
+      }
+
+      .game-players {
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-red);
+        text-align: right;
+      }
+
+      /* MODAL FOR EXPORT */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal {
+        background: var(--primary-white);
+        width: 100%;
+        max-width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-gray);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      .modal-content {
+        padding: 20px;
+      }
+
+      .export-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .export-option {
+        padding: 15px;
+        border: 1px solid var(--border-gray);
+        background: var(--primary-white);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        touch-action: manipulation;
+      }
+
+      .export-option:hover {
+        background: var(--hover-gray);
+      }
+
+      .export-option.active {
+        background: var(--primary-black);
+        color: var(--primary-white);
+      }
+
+      .export-option-icon {
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
+
+      .export-option-text {
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .export-settings {
+        border-top: 1px solid var(--border-gray);
+        padding-top: 15px;
+      }
+
+      .export-setting {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .export-checkbox {
+        width: 16px;
+        height: 16px;
+      }
+
+      .export-setting-label {
+        font-size: 11px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      /* FAB for filters on small screens */
+      .filter-fab {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--primary-black);
+        color: var(--primary-white);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 150;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        touch-action: manipulation;
+      }
+
+      /* LOADING STATE */
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+      }
+
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border-gray);
+        border-top: 2px solid var(--accent-red);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-        
-        :root {
-            --primary-black: #000000;
-            --primary-white: #ffffff;
-            --accent-red: #ff0000;
-            --light-gray: #f8f8f8;
-            --medium-gray: #666666;
-            --border-gray: #e0e0e0;
-            --hover-gray: #f0f0f0;
-            --success-green: #00ff00;
+        100% {
+          transform: rotate(360deg);
         }
-        
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--primary-white);
-            color: var(--primary-black);
-            line-height: 1.4;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        /* MOBILE-FIRST HEADER */
+      }
+
+      /* NO RESULTS */
+      .no-results {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--medium-gray);
+      }
+
+      .no-results-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+
+      .no-results-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+
+      .no-results-text {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      /* TABLET AND DESKTOP ADJUSTMENTS */
+      @media (min-width: 768px) {
         .header {
-            border-bottom: 1px solid var(--primary-black);
-            padding: 20px 15px;
-            background: var(--primary-white);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+          padding: 30px 20px;
         }
-        
+
         .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+          max-width: 1200px;
+          margin: 0 auto;
         }
-        
+
         .header h1 {
-            font-weight: 300;
-            font-size: 1.8rem;
-            letter-spacing: -0.02em;
-            line-height: 0.9;
+          font-size: 2.5rem;
         }
-        
-        .header-stats {
-            text-align: right;
-            font-size: 10px;
-            font-weight: 400;
-            color: var(--medium-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            line-height: 1.4;
-        }
-        
-        .red-accent {
-            color: var(--accent-red);
-        }
-        
-        /* MOBILE SEARCH */
+
         .search-section {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-gray);
-            background: var(--light-gray);
+          padding: 20px;
         }
-        
-        .search-container {
-            position: relative;
-            margin-bottom: 15px;
-        }
-        
-        .search-input-wrapper {
-            position: relative;
-        }
-        
-        .search-input {
-            width: 100%;
-            border: none;
-            border-bottom: 2px solid var(--primary-black);
-            background: transparent;
-            padding: 10px 0;
-            font-size: 16px; /* Prevents zoom on iOS */
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 400;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-        
-        .search-input:focus {
-            border-bottom-color: var(--accent-red);
-        }
-        
-        .search-clear {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: var(--medium-gray);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            touch-action: manipulation;
-        }
-        
-        .search-input:not(:placeholder-shown) + .search-clear {
-            opacity: 1;
-        }
-        
-        .search-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--medium-gray);
-            margin-top: 10px;
-        }
-        
-        .results-count {
-            color: var(--accent-red);
-        }
-        
-        /* MOBILE FILTERS */
-        .filters-container {
-            background: var(--primary-white);
-            border-bottom: 1px solid var(--border-gray);
-        }
-        
-        .filter-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: none;
-            border: none;
-            width: 100%;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .filter-toggle-icon {
-            transition: transform 0.3s ease;
-        }
-        
-        .filter-toggle.active .filter-toggle-icon {
-            transform: rotate(180deg);
-        }
-        
-        .filters-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .filters-content.open {
-            max-height: 500px;
-        }
-        
-        .filters-section {
-            border-top: 1px solid var(--border-gray);
-            padding: 15px;
-        }
-        
-        .filters-label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--medium-gray);
-            margin-bottom: 10px;
-        }
-        
+
         .filters {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--primary-black);
-            margin-bottom: 15px;
+          grid-template-columns: repeat(3, 1fr);
         }
-        
-        .filter-btn {
-            background: var(--primary-white);
-            border: none;
-            padding: 12px 8px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            touch-action: manipulation;
-            text-align: center;
-        }
-        
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: var(--primary-black);
-            color: var(--primary-white);
-        }
-        
-        .filter-btn .count {
-            font-size: 8px;
-            opacity: 0.7;
-            margin-left: 3px;
-        }
-        
-        /* MOBILE SORT */
-        .sort-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 15px;
-            margin-bottom: 15px;
-        }
-        
-        .sort-label {
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--medium-gray);
-            white-space: nowrap;
-        }
-        
-        .sort-select {
-            flex: 1;
-            border: 1px solid var(--border-gray);
-            background: var(--primary-white);
-            padding: 8px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        /* MOBILE EXPORT BAR */
-        .export-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--primary-black);
-            color: var(--primary-white);
-            padding: 15px;
-            z-index: 200;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .export-bar.visible {
-            transform: translateY(0);
-        }
-        
-        .export-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .export-info {
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .export-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .export-btn {
-            background: var(--accent-red);
-            color: var(--primary-white);
-            border: none;
-            padding: 8px 12px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .export-btn.secondary {
-            background: var(--primary-white);
-            color: var(--primary-black);
-        }
-        
-        /* MOBILE GAMES LIST */
-        .games-container {
-            padding-bottom: 80px; /* Space for export bar */
-        }
-        
-        .game-card {
-            background: var(--primary-white);
-            border-bottom: 1px solid var(--border-gray);
-            padding: 20px 15px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            position: relative;
-        }
-        
-        .game-card:hover {
-            background: var(--hover-gray);
-        }
-        
-        .game-card.selected {
-            background: var(--light-gray);
-            border-left: 4px solid var(--accent-red);
-            padding-left: 11px;
-        }
-        
-        .game-checkbox {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .game-header {
-            display: grid;
-            grid-template-columns: 40px 1fr;
-            gap: 15px;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-        
-        .game-number {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--medium-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .game-titles {
-            min-width: 0;
-            margin-right: 25px; /* Space for checkbox */
-        }
-        
-        .game-title {
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1.2;
-            margin-bottom: 3px;
-        }
-        
-        .game-title-en {
-            font-size: 12px;
-            font-weight: 300;
-            color: var(--medium-gray);
-            font-style: italic;
-        }
-        
-        .game-description {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.5;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .game-meta {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-gray);
-        }
-        
-        .game-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .game-tag {
-            font-size: 9px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--medium-gray);
-            background: var(--light-gray);
-            padding: 4px 8px;
-            border-radius: 2px;
-        }
-        
-        .game-tag.category {
-            color: var(--accent-red);
-            background: var(--primary-white);
-            border: 1px solid var(--accent-red);
-        }
-        
-        .game-players {
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-red);
-            text-align: right;
-        }
-        
-        /* MODAL FOR EXPORT */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .modal {
-            background: var(--primary-white);
-            width: 100%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
-        
-        .modal-content {
-            padding: 20px;
-        }
-        
+
         .export-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+          grid-template-columns: repeat(3, 1fr);
         }
-        
-        .export-option {
-            padding: 15px;
-            border: 1px solid var(--border-gray);
-            background: var(--primary-white);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            touch-action: manipulation;
+
+        .games-container {
+          max-width: 1200px;
+          margin: 0 auto;
         }
-        
-        .export-option:hover {
-            background: var(--hover-gray);
-        }
-        
-        .export-option.active {
-            background: var(--primary-black);
-            color: var(--primary-white);
-        }
-        
-        .export-option-icon {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        .export-option-text {
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .export-settings {
-            border-top: 1px solid var(--border-gray);
-            padding-top: 15px;
-        }
-        
-        .export-setting {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .export-checkbox {
-            width: 16px;
-            height: 16px;
-        }
-        
-        .export-setting-label {
-            font-size: 11px;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        /* FAB for filters on small screens */
+
         .filter-fab {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--primary-black);
-            color: var(--primary-white);
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 150;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            touch-action: manipulation;
+          display: none;
         }
-        
-        /* LOADING STATE */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+      }
+
+      @media (min-width: 1024px) {
+        .filters {
+          grid-template-columns: repeat(4, 1fr);
         }
-        
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border-gray);
-            border-top: 2px solid var(--accent-red);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+
+        .games-container {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1px;
+          background: var(--border-gray);
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .game-card {
+          border-bottom: none;
         }
-        
-        /* NO RESULTS */
-        .no-results {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--medium-gray);
-        }
-        
-        .no-results-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        
-        .no-results-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-        
-        .no-results-text {
-            font-size: 12px;
-            line-height: 1.5;
-        }
-        
-        /* TABLET AND DESKTOP ADJUSTMENTS */
-        @media (min-width: 768px) {
-            .header {
-                padding: 30px 20px;
-            }
-            
-            .header-content {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .search-section {
-                padding: 20px;
-            }
-            
-            .filters {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .export-options {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .games-container {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .filter-fab {
-                display: none;
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .filters {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .games-container {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1px;
-                background: var(--border-gray);
-            }
-            
-            .game-card {
-                border-bottom: none;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header class="header">
-        <div class="header-content">
-            <h1>
-                impro<br>
-                <span class="red-accent">games</span>
-            </h1>
-            <div class="header-stats">
-                Baza gier improwizacyjnych<br>
-                <span class="red-accent" id="totalGames">5</span> pozycji<br>
-                Mobile 2024
-            </div>
+      <div class="header-content">
+        <h1>
+          impro<br />
+          <span class="red-accent">games</span>
+        </h1>
+        <div class="header-stats">
+          Baza gier improwizacyjnych<br />
+          <span class="red-accent" id="totalGames">5</span> pozycji<br />
+          Mobile 2024
         </div>
+      </div>
     </header>
-    
+
     <section class="search-section">
-        <div class="search-container">
-            <div class="search-input-wrapper">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Szukaj gry..."
-                    id="searchInput"
-                >
-                <button class="search-clear" id="searchClear">×</button>
-            </div>
-            
-            <div class="search-meta">
-                <span>Szukaj w nazwach i opisach</span>
-                <span class="results-count" id="resultsCount">5 gier</span>
-            </div>
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Szukaj gry..."
+            id="searchInput"
+          />
+          <button class="search-clear" id="searchClear">×</button>
         </div>
+
+        <div class="search-meta">
+          <span>Szukaj w nazwach i opisach</span>
+          <span class="results-count" id="resultsCount">5 gier</span>
+        </div>
+      </div>
     </section>
-    
+
     <div class="filters-container">
-        <button class="filter-toggle" id="filterToggle">
-            <span>Filtry i sortowanie</span>
-            <span class="filter-toggle-icon">▼</span>
-        </button>
-        
-        <div class="filters-content" id="filtersContent">
-            <div class="filters-section">
-                <div class="filters-label">Kategorie</div>
-                <div class="filters" id="categoryFilters">
-                    <button class="filter-btn active" data-filter="all">wszystkie</button>
-                    <button class="filter-btn" data-filter="collaboration">współpraca</button>
-                    <button class="filter-btn" data-filter="energy">energia</button>
-                    <button class="filter-btn" data-filter="storytelling">opowiadanie</button>
-                    <button class="filter-btn" data-filter="character">postać</button>
-                    <button class="filter-btn" data-filter="communication">komunikacja</button>
-                </div>
-            </div>
-            
-            <div class="filters-section">
-                <div class="filters-label">Liczba graczy</div>
-                <div class="filters" id="playerFilters">
-                    <button class="filter-btn active" data-filter="all">wszyscy</button>
-                    <button class="filter-btn" data-filter="2">2 graczy</button>
-                    <button class="filter-btn" data-filter="3-5">3-5 graczy</button>
-                    <button class="filter-btn" data-filter="6+">6+ graczy</button>
-                </div>
-            </div>
-            
-            <div class="sort-container">
-                <span class="sort-label">Sortowanie:</span>
-                <select class="sort-select" id="sortSelect">
-                    <option value="nr_katalogowy">Numer katalogowy</option>
-                    <option value="nazwa">Nazwa A-Z</option>
-                    <option value="nazwa-desc">Nazwa Z-A</option>
-                    <option value="players">Liczba graczy</option>
-                    <option value="kategoria">Kategoria</option>
-                    <option value="fokus">Główny fokus</option>
-                </select>
-            </div>
+      <button class="filter-toggle" id="filterToggle">
+        <span>Filtry i sortowanie</span>
+        <span class="filter-toggle-icon">▼</span>
+      </button>
+
+      <div class="filters-content" id="filtersContent">
+        <div class="filters-section">
+          <div class="filters-label">Kategorie</div>
+          <div class="filters" id="categoryFilters">
+            <button class="filter-btn active" data-filter="all">
+              wszystkie
+            </button>
+            <button class="filter-btn" data-filter="collaboration">
+              współpraca
+            </button>
+            <button class="filter-btn" data-filter="energy">energia</button>
+            <button class="filter-btn" data-filter="storytelling">
+              opowiadanie
+            </button>
+            <button class="filter-btn" data-filter="character">postać</button>
+            <button class="filter-btn" data-filter="communication">
+              komunikacja
+            </button>
+          </div>
         </div>
+
+        <div class="filters-section">
+          <div class="filters-label">Główny Fokus</div>
+          <div class="filters" id="focusFilters">
+            <button class="filter-btn active" data-filter="all">
+              wszystkie
+            </button>
+          </div>
+        </div>
+        <div class="filters-section">
+          <div class="filters-label">Liczba graczy</div>
+          <div class="filters" id="playerFilters">
+            <button class="filter-btn active" data-filter="all">wszyscy</button>
+            <button class="filter-btn" data-filter="2">2 graczy</button>
+            <button class="filter-btn" data-filter="3-5">3-5 graczy</button>
+            <button class="filter-btn" data-filter="6+">6+ graczy</button>
+          </div>
+        </div>
+
+        <div class="sort-container">
+          <span class="sort-label">Sortowanie:</span>
+          <select class="sort-select" id="sortSelect">
+            <option value="nr_katalogowy">Numer katalogowy</option>
+            <option value="nazwa">Nazwa A-Z</option>
+            <option value="nazwa-desc">Nazwa Z-A</option>
+            <option value="players">Liczba graczy</option>
+            <option value="kategoria">Kategoria</option>
+            <option value="fokus">Główny fokus</option>
+          </select>
+        </div>
+      </div>
     </div>
-    
+
     <main class="games-container" id="gamesContainer">
-        <div class="loading">
-            <div class="spinner"></div>
-        </div>
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
     </main>
-    
+
     <div class="export-bar" id="exportBar">
-        <div class="export-content">
-            <div class="export-info">
-                Wybrano: <span id="selectedCount">0</span> gier
-            </div>
-            <div class="export-actions">
-                <button class="export-btn secondary" id="clearSelection">Wyczyść</button>
-                <button class="export-btn" id="exportBtn">Eksportuj</button>
-            </div>
+      <div class="export-content">
+        <div class="export-info">
+          Wybrano: <span id="selectedCount">0</span> gier
         </div>
+        <div class="export-actions">
+          <button class="export-btn secondary" id="clearSelection">
+            Wyczyść
+          </button>
+          <button class="export-btn" id="exportBtn">Eksportuj</button>
+        </div>
+      </div>
     </div>
-    
+
     <!-- Filter FAB for mobile -->
     <button class="filter-fab" id="filterFab">⚙</button>
-    
+
     <!-- Export Modal -->
     <div class="modal-overlay" id="exportModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Eksport gier</div>
-                <button class="modal-close" id="modalClose">×</button>
-            </div>
-            <div class="modal-content">
-                <div class="export-options">
-                    <div class="export-option active" data-type="clipboard">
-                        <div class="export-option-icon">📋</div>
-                        <div class="export-option-text">Schowek</div>
-                    </div>
-                    <div class="export-option" data-type="sms">
-                        <div class="export-option-icon">📱</div>
-                        <div class="export-option-text">SMS</div>
-                    </div>
-                    <div class="export-option" data-type="email">
-                        <div class="export-option-icon">📧</div>
-                        <div class="export-option-text">Email</div>
-                    </div>
-                    <div class="export-option" data-type="whatsapp">
-                        <div class="export-option-icon">💬</div>
-                        <div class="export-option-text">WhatsApp</div>
-                    </div>
-                </div>
-                
-                <div class="export-settings">
-                    <div class="export-setting">
-                        <input type="checkbox" class="export-checkbox" id="includeDescription" checked>
-                        <label class="export-setting-label" for="includeDescription">Dołącz opisy</label>
-                    </div>
-                    <div class="export-setting">
-                        <input type="checkbox" class="export-checkbox" id="includeEnglish">
-                        <label class="export-setting-label" for="includeEnglish">Nazwy angielskie</label>
-                    </div>
-                    <div class="export-setting">
-                        <input type="checkbox" class="export-checkbox" id="includeNumbers">
-                        <label class="export-setting-label" for="includeNumbers">Numery katalogowe</label>
-                    </div>
-                </div>
-            </div>
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">Eksport gier</div>
+          <button class="modal-close" id="modalClose">×</button>
         </div>
+        <div class="modal-content">
+          <div class="export-options">
+            <div class="export-option active" data-type="clipboard">
+              <div class="export-option-icon">📋</div>
+              <div class="export-option-text">Schowek</div>
+            </div>
+            <div class="export-option" data-type="sms">
+              <div class="export-option-icon">📱</div>
+              <div class="export-option-text">SMS</div>
+            </div>
+            <div class="export-option" data-type="email">
+              <div class="export-option-icon">📧</div>
+              <div class="export-option-text">Email</div>
+            </div>
+            <div class="export-option" data-type="whatsapp">
+              <div class="export-option-icon">💬</div>
+              <div class="export-option-text">WhatsApp</div>
+            </div>
+          </div>
+
+          <div class="export-settings">
+            <div class="export-setting">
+              <input
+                type="checkbox"
+                class="export-checkbox"
+                id="includeDescription"
+                checked
+              />
+              <label class="export-setting-label" for="includeDescription"
+                >Dołącz opisy</label
+              >
+            </div>
+            <div class="export-setting">
+              <input
+                type="checkbox"
+                class="export-checkbox"
+                id="includeEnglish"
+              />
+              <label class="export-setting-label" for="includeEnglish"
+                >Nazwy angielskie</label
+              >
+            </div>
+            <div class="export-setting">
+              <input
+                type="checkbox"
+                class="export-checkbox"
+                id="includeNumbers"
+              />
+              <label class="export-setting-label" for="includeNumbers"
+                >Numery katalogowe</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        /*
-         * INSTRUKCJA UŻYCIA Z ZEWNĘTRZNYM PLIKIEM JSON:
-         * 
-         * 1. Utwórz plik 'impro_games_cleaned.json' w tym samym katalogu co ten plik HTML
-         * 2. Plik powinien zawierać tablicę obiektów z następującą strukturą:
-         * 
-         * [
-         *   {
-         *     "nr_katalogowy": "001",
-         *     "nazwa": "Nazwa gry po polsku",
-         *     "nazwa_ang": "English game name",
-         *     "opis": "Opis gry po polsku",
-         *     "opis_ang": "English description",
-         *     "kategoria": "Kategoria",
-         *     "glowny_fokus": "Główny fokus",
-         *     "minimalna_liczba_graczy": 2
-         *   }
-         * ]
-         * 
-         * 3. Jeśli plik nie zostanie znaleziony, aplikacja użyje przykładowych danych
-         * 4. Filtry będą automatycznie generowane na podstawie danych w pliku
-         */
+      /*
+       * INSTRUKCJA UŻYCIA Z ZEWNĘTRZNYM PLIKIEM JSON:
+       *
+       * 1. Utwórz plik 'impro_games_cleaned.json' w tym samym katalogu co ten plik HTML
+       * 2. Plik powinien zawierać tablicę obiektów z następującą strukturą:
+       *
+       * [
+       * {
+       * "nr_katalogowy": "001",
+       * "nazwa": "Nazwa gry po polsku",
+       * "nazwa_ang": "English game name",
+       * "opis": "Opis gry po polsku",
+       * "opis_ang": "English description",
+       * "kategoria": "Kategoria",
+       * "glowny_fokus": "Główny fokus",
+       * "minimalna_liczba_graczy": 2
+       * }
+       * ]
+       *
+       * 3. Jeśli plik nie zostanie znaleziony, aplikacja użyje przykładowych danych
+       * 4. Filtry będą automatycznie generowane na podstawie danych w pliku
+       */
 
-        // Game data with new JSON structure (sample data - will be replaced if external JSON loads)
-        const gameData = [
-            {
-                "nr_katalogowy": "001",
-                "nazwa": "Tak, i...",
-                "nazwa_ang": "Yes, and...",
-                "opis": "Podstawowe ćwiczenie improwizacyjne uczące akceptowania i rozwijania pomysłów innych osób.",
-                "opis_ang": "Basic improvisation exercise teaching acceptance and building on others' ideas.",
-                "kategoria": "Współpraca",
-                "glowny_fokus": "Akceptacja",
-                "minimalna_liczba_graczy": 2
-            },
-            {
-                "nr_katalogowy": "002",
-                "nazwa": "Freeze Tag",
-                "nazwa_ang": "Freeze Tag",
-                "opis": "Energetyczna gra gdzie gracze tworzą sceny z zamrożonych pozycji innych graczy.",
-                "opis_ang": "Energetic game where players create scenes from frozen positions of other players.",
-                "kategoria": "Energia",
-                "glowny_fokus": "Fizyczność",
-                "minimalna_liczba_graczy": 6
-            },
-            {
-                "nr_katalogowy": "003",
-                "nazwa": "Jeden słowem na raz",
-                "nazwa_ang": "Word at a Time",
-                "opis": "Grupa tworzy wspólną historię, gdzie każdy gracz dodaje po jednym słowie.",
-                "opis_ang": "Group creates a shared story where each player adds one word at a time.",
-                "kategoria": "Opowiadanie",
-                "glowny_fokus": "Współpraca",
-                "minimalna_liczba_graczy": 3
-            },
-            {
-                "nr_katalogowy": "004",
-                "nazwa": "Podaj dalej",
-                "nazwa_ang": "Pass the Motion",
-                "opis": "Rytmiczne ćwiczenie rozgrzewające na przekazywanie gestów i dźwięków.",
-                "opis_ang": "Rhythmic warm-up exercise for passing gestures and sounds.",
-                "kategoria": "Rozgrzewka",
-                "glowny_fokus": "Rytm",
-                "minimalna_liczba_graczy": 6
-            },
-            {
-                "nr_katalogowy": "005",
-                "nazwa": "Ekspert",
-                "nazwa_ang": "Expert",
-                "opis": "Jeden gracz prowadzi wywiad z ekspertem od czegoś absurdalnego.",
-                "opis_ang": "One player interviews an expert on something absurd.",
-                "kategoria": "Postać",
-                "glowny_fokus": "Pewność siebie",
-                "minimalna_liczba_graczy": 2
-            }
-        ];
+      // Game data with new JSON structure (sample data - will be replaced if external JSON loads)
+      const gameData = [
+        {
+          nr_katalogowy: "001",
+          nazwa: "Tak, i...",
+          nazwa_ang: "Yes, and...",
+          opis: "Podstawowe ćwiczenie improwizacyjne uczące akceptowania i rozwijania pomysłów innych osób.",
+          opis_ang:
+            "Basic improvisation exercise teaching acceptance and building on others' ideas.",
+          kategoria: "Współpraca",
+          glowny_fokus: "Akceptacja",
+          minimalna_liczba_graczy: 2,
+        },
+        {
+          nr_katalogowy: "002",
+          nazwa: "Freeze Tag",
+          nazwa_ang: "Freeze Tag",
+          opis: "Energetyczna gra gdzie gracze tworzą sceny z zamrożonych pozycji innych graczy.",
+          opis_ang:
+            "Energetic game where players create scenes from frozen positions of other players.",
+          kategoria: "Energia",
+          glowny_fokus: "Fizyczność",
+          minimalna_liczba_graczy: 6,
+        },
+        {
+          nr_katalogowy: "003",
+          nazwa: "Jeden słowem na raz",
+          nazwa_ang: "Word at a Time",
+          opis: "Grupa tworzy wspólną historię, gdzie każdy gracz dodaje po jednym słowie.",
+          opis_ang:
+            "Group creates a shared story where each player adds one word at a time.",
+          kategoria: "Opowiadanie",
+          glowny_fokus: "Współpraca",
+          minimalna_liczba_graczy: 3,
+        },
+        {
+          nr_katalogowy: "004",
+          nazwa: "Podaj dalej",
+          nazwa_ang: "Pass the Motion",
+          opis: "Rytmiczne ćwiczenie rozgrzewające na przekazywanie gestów i dźwięków.",
+          opis_ang:
+            "Rhythmic warm-up exercise for passing gestures and sounds.",
+          kategoria: "Rozgrzewka",
+          glowny_fokus: "Rytm",
+          minimalna_liczba_graczy: 6,
+        },
+        {
+          nr_katalogowy: "005",
+          nazwa: "Ekspert",
+          nazwa_ang: "Expert",
+          opis: "Jeden gracz prowadzi wywiad z ekspertem od czegoś absurdalnego.",
+          opis_ang: "One player interviews an expert on something absurd.",
+          kategoria: "Postać",
+          glowny_fokus: "Pewność siebie",
+          minimalna_liczba_graczy: 2,
+        },
+      ]
 
-        // Application state
-        let selectedGames = new Set();
-        let filteredData = [...gameData];
-        let currentSort = 'nr_katalogowy';
-        let selectedExportType = 'clipboard';
-        let filtersOpen = false;
+      // Application state
+      let selectedGames = new Set()
+      let filteredData = [...gameData] // Initialize with sample data
+      let currentSort = "nr_katalogowy"
+      let selectedExportType = "clipboard"
+      let filtersOpen = false
 
-        // DOM elements
-        const searchInput = document.getElementById('searchInput');
-        const searchClear = document.getElementById('searchClear');
-        const resultsCount = document.getElementById('resultsCount');
-        const selectedCount = document.getElementById('selectedCount');
-        const gamesContainer = document.getElementById('gamesContainer');
-        const sortSelect = document.getElementById('sortSelect');
-        const filterToggle = document.getElementById('filterToggle');
-        const filtersContent = document.getElementById('filtersContent');
-        const exportBar = document.getElementById('exportBar');
-        const exportModal = document.getElementById('exportModal');
+      // DOM elements
+      const searchInput = document.getElementById("searchInput")
+      const searchClear = document.getElementById("searchClear")
+      const resultsCount = document.getElementById("resultsCount")
+      const selectedCount = document.getElementById("selectedCount")
+      const gamesContainer = document.getElementById("gamesContainer")
+      const sortSelect = document.getElementById("sortSelect")
+      const filterToggle = document.getElementById("filterToggle")
+      const filtersContent = document.getElementById("filtersContent")
+      const exportBar = document.getElementById("exportBar")
+      const exportModal = document.getElementById("exportModal")
 
-        // Initialize application
-        function init() {
-            // Try to load data from external JSON file first
-            loadGameData().then(() => {
-                updateFiltersFromData();
-                renderGames(gameData);
-                updateCounts();
-                setupEventListeners();
-            }).catch(error => {
-                console.log('Using embedded sample data:', error.message);
-                updateFiltersFromData();
-                renderGames(gameData);
-                updateCounts();
-                setupEventListeners();
-            });
+      // Initialize application
+      async function init() {
+        // Made init async
+        // Start with loading spinner
+        gamesContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            `
+
+        try {
+          await loadGameData() // Wait for data to load
+        } catch (error) {
+          console.warn(
+            "Could not load external JSON, using embedded sample data.",
+            error
+          )
+          // gameData already has sample data, so no action needed here.
         }
 
-        // Function to dynamically update filters based on loaded data
-        function updateFiltersFromData() {
-            try {
-                // Get unique categories
-                const categories = [...new Set(gameData.map(game => game.kategoria))].sort();
-                const categoryFilters = document.getElementById('categoryFilters');
-                
-                if (!categoryFilters) {
-                    console.error('Category filters container not found');
-                    return;
-                }
-                
-                // Create new category filters
-                categoryFilters.innerHTML = `
+        updateFiltersFromData() // Generate dynamic filters based on potentially loaded data
+        setupBasicEventListeners() // Setup listeners that don't depend on dynamic content
+        setupFilterEventListeners() // Setup listeners for dynamic filters
+        filterAndSort() // Initial render of games with current filters and sort
+        updateCounts()
+      }
+
+      // Function to dynamically update filters based on loaded data
+      function updateFiltersFromData() {
+        try {
+          // Get unique categories
+          const categories = [
+            ...new Set(gameData.map((game) => game.kategoria)),
+          ].sort()
+          const categoryFilters = document.getElementById("categoryFilters")
+
+          if (!categoryFilters) {
+            console.error("Category filters container not found")
+            return
+          }
+
+          // Create new category filters
+          categoryFilters.innerHTML = `
                     <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
-                `;
-                
-                categories.forEach(category => {
-                    const count = gameData.filter(game => game.kategoria === category).length;
-                    const button = document.createElement('button');
-                    button.className = 'filter-btn';
-                    button.dataset.filter = category;
-                    button.innerHTML = `${category.toLowerCase()} <span class="count">(${count})</span>`;
-                    categoryFilters.appendChild(button);
-                });
+                `
 
-                // Get unique focuses
-                const focuses = [...new Set(gameData.map(game => game.glowny_fokus))].sort();
-                const focusFilters = document.getElementById('focusFilters');
-                
-                if (!focusFilters) {
-                    console.error('Focus filters container not found');
-                    return;
-                }
-                
-                // Create new focus filters
-                focusFilters.innerHTML = `
+          categories.forEach((category) => {
+            const count = gameData.filter(
+              (game) => game.kategoria === category
+            ).length
+            const button = document.createElement("button")
+            button.className = "filter-btn"
+            button.dataset.filter = category
+            button.innerHTML = `${category.toLowerCase()} <span class="count">(${count})</span>`
+            categoryFilters.appendChild(button)
+          })
+
+          // Get unique focuses
+          const focuses = [
+            ...new Set(gameData.map((game) => game.glowny_fokus)),
+          ].sort()
+          const focusFilters = document.getElementById("focusFilters")
+
+          // --- FIX: Add this check for focusFilters, and ensure it exists in HTML ---
+          if (!focusFilters) {
+            console.error(
+              'Focus filters container not found. Please add <div id="focusFilters"> to your HTML.'
+            )
+            return // Exit if element not found to prevent errors
+          }
+
+          // Create new focus filters
+          focusFilters.innerHTML = `
                     <button class="filter-btn active" data-filter="all">wszystkie <span class="count">(${gameData.length})</span></button>
-                `;
-                
-                focuses.forEach(focus => {
-                    const count = gameData.filter(game => game.glowny_fokus === focus).length;
-                    const button = document.createElement('button');
-                    button.className = 'filter-btn';
-                    button.dataset.filter = focus;
-                    button.innerHTML = `${focus.toLowerCase()} <span class="count">(${count})</span>`;
-                    focusFilters.appendChild(button);
-                });
-                
-                console.log(`✅ Updated filters: ${categories.length} categories, ${focuses.length} focuses`);
-                
-            } catch (error) {
-                console.error('❌ Error updating filters:', error);
-            }
+                `
+
+          focuses.forEach((focus) => {
+            const count = gameData.filter(
+              (game) => game.glowny_fokus === focus
+            ).length
+            const button = document.createElement("button")
+            button.className = "filter-btn"
+            button.dataset.filter = focus
+            button.innerHTML = `${focus.toLowerCase()} <span class="count">(${count})</span>`
+            focusFilters.appendChild(button)
+          })
+
+          console.log(
+            `✅ Updated filters: ${categories.length} categories, ${focuses.length} focuses`
+          )
+        } catch (error) {
+          console.error("❌ Error updating filters:", error)
+        }
+      }
+
+      // Function to load game data from external JSON file
+      async function loadGameData() {
+        try {
+          const response = await fetch("impro_games_cleaned.json")
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          }
+          const data = await response.json()
+
+          // Validate data structure
+          if (!Array.isArray(data) || data.length === 0) {
+            throw new Error("Invalid data format")
+          }
+
+          // Check if first item has required fields
+          const requiredFields = [
+            "nr_katalogowy",
+            "nazwa",
+            "nazwa_ang",
+            "opis",
+            "opis_ang",
+            "kategoria",
+            "glowny_fokus",
+            "minimalna_liczba_graczy",
+          ]
+          const firstItem = data[0]
+          const missingFields = requiredFields.filter(
+            (field) => !(field in firstItem)
+          )
+
+          if (missingFields.length > 0) {
+            throw new Error(
+              `Missing required fields in JSON data: ${missingFields.join(
+                ", "
+              )}`
+            )
+          }
+
+          // Replace sample data with loaded data
+          gameData.length = 0 // Clear existing sample data
+          gameData.push(...data) // Add loaded data
+          filteredData = [...gameData] // Reset filteredData as well
+
+          console.log(`✅ Loaded ${data.length} games from JSON file`)
+        } catch (error) {
+          console.error("❌ Error loading JSON file:", error.message)
+          console.log(
+            '📝 Make sure "impro_games_cleaned.json" exists and has the correct structure'
+          )
+          throw error // Re-throw to be caught by init() and use sample data
+        }
+      }
+
+      // Consolidated setup function for all event listeners
+      function setupEventListeners() {
+        setupBasicEventListeners()
+        setupFilterEventListeners() // Call this after dynamic filters are rendered
+      }
+
+      // Basic event listeners setup (doesn't depend on dynamic filters)
+      function setupBasicEventListeners() {
+        // Search functionality
+        searchInput.addEventListener("input", handleSearch)
+        searchClear.addEventListener("click", clearSearch)
+
+        // Filter toggle
+        filterToggle.addEventListener("click", toggleFilters)
+
+        // Sort functionality
+        sortSelect.removeEventListener("change", handleSort) // Prevent duplicate listeners
+        sortSelect.addEventListener("change", handleSort)
+
+        // Export functionality
+        document.querySelectorAll(".export-option").forEach((option) => {
+          option.removeEventListener("click", handleExportType) // Prevent duplicate listeners
+          option.addEventListener("click", handleExportType)
+        })
+
+        document
+          .getElementById("exportBtn")
+          .removeEventListener("click", showExportModal)
+        document
+          .getElementById("exportBtn")
+          .addEventListener("click", showExportModal)
+
+        document
+          .getElementById("clearSelection")
+          .removeEventListener("click", clearSelection)
+        document
+          .getElementById("clearSelection")
+          .addEventListener("click", clearSelection)
+
+        // Modal
+        document
+          .getElementById("modalClose")
+          .removeEventListener("click", hideExportModal)
+        document
+          .getElementById("modalClose")
+          .addEventListener("click", hideExportModal)
+
+        exportModal.removeEventListener("click", (e) => {
+          // Using anonymous function, need to manage carefully or separate
+          if (e.target === exportModal) hideExportModal()
+        })
+        // Re-add modal overlay listener specifically to avoid issues if it's removed and re-added.
+        // A better way is to check if it's already listening. For simplicity, just re-add it like others.
+        // Alternatively, define a named function for the overlay click.
+        if (!exportModal._overlayListener) {
+          // Add a flag to prevent multiple listeners on overlay
+          exportModal._overlayListener = (e) => {
+            if (e.target === exportModal) hideExportModal()
+          }
+          exportModal.addEventListener("click", exportModal._overlayListener)
+        }
+      }
+
+      // Filter event listeners setup (for dynamically generated filters)
+      function setupFilterEventListeners() {
+        // Filter buttons - these are generated dynamically so we add listeners after creation
+        // Remove existing listeners to avoid duplicates if called multiple times (e.g., after data load)
+        document.querySelectorAll(".filters .filter-btn").forEach((btn) => {
+          btn.removeEventListener("click", handleFilter) // Remove existing listeners
+          btn.addEventListener("click", handleFilter) // Add new listener
+        })
+        console.log("✅ Filter event listeners setup complete")
+      }
+
+      function toggleFilters() {
+        filtersOpen = !filtersOpen
+        filterToggle.classList.toggle("active", filtersOpen)
+        filtersContent.classList.toggle("open", filtersOpen)
+      }
+
+      function handleSearch(e) {
+        filterAndSort()
+      }
+
+      function clearSearch() {
+        searchInput.value = ""
+        filterAndSort()
+      }
+
+      function filterGames(searchTerm, filters) {
+        // 'filters' argument is not used in current implementation, remove it or use it
+        let filtered = [...gameData]
+
+        // Apply search filter
+        if (searchTerm) {
+          const terms = searchTerm.toLowerCase().split(" ")
+          filtered = filtered.filter((game) => {
+            const searchText = `${game.nazwa} ${game.nazwa_ang || ""} ${
+              game.opis
+            } ${game.opis_ang || ""} ${game.kategoria} ${
+              game.glowny_fokus
+            }`.toLowerCase()
+            return terms.every((term) => searchText.includes(term))
+          })
         }
 
-        // Function to load game data from external JSON file
-        async function loadGameData() {
-            try {
-                const response = await fetch('impro_games_cleaned.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                
-                // Validate data structure
-                if (!Array.isArray(data) || data.length === 0) {
-                    throw new Error('Invalid data format');
-                }
-                
-                // Check if first item has required fields
-                const requiredFields = ['nr_katalogowy', 'nazwa', 'nazwa_ang', 'opis', 'opis_ang', 'kategoria', 'glowny_fokus', 'minimalna_liczba_graczy'];
-                const firstItem = data[0];
-                const missingFields = requiredFields.filter(field => !(field in firstItem));
-                
-                if (missingFields.length > 0) {
-                    throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-                }
-                
-                // Replace sample data with loaded data
-                gameData.length = 0;
-                gameData.push(...data);
-                filteredData = [...gameData];
-                
-                console.log(`✅ Loaded ${data.length} games from JSON file`);
-            } catch (error) {
-                console.error('❌ Error loading JSON file:', error.message);
-                console.log('📝 Make sure "impro_games_cleaned.json" exists and has the correct structure');
-                throw error;
-            }
+        // Apply category filters
+        const activeCategoryFilters = Array.from(
+          document.querySelectorAll(
+            '#categoryFilters .filter-btn.active:not([data-filter="all"])'
+          )
+        ).map((btn) => btn.dataset.filter)
+
+        if (activeCategoryFilters.length > 0) {
+          filtered = filtered.filter((game) => {
+            return activeCategoryFilters.includes(game.kategoria)
+          })
         }
 
-        // Basic event listeners setup (doesn't depend on dynamic filters)
-        function setupBasicEventListeners() {
-            // Search functionality
-            searchInput.addEventListener('input', handleSearch);
-            searchClear.addEventListener('click', clearSearch);
-            
-            // Filter toggle
-            filterToggle.addEventListener('click', toggleFilters);
-            
-            // Sort functionality
-            sortSelect.addEventListener('change', handleSort);
-            
-            // Export functionality
-            document.querySelectorAll('.export-option').forEach(option => {
-                option.addEventListener('click', handleExportType);
-            });
-            
-            document.getElementById('exportBtn').addEventListener('click', showExportModal);
-            document.getElementById('clearSelection').addEventListener('click', clearSelection);
-            
-            // Modal
-            document.getElementById('modalClose').addEventListener('click', hideExportModal);
-            exportModal.addEventListener('click', (e) => {
-                if (e.target === exportModal) hideExportModal();
-            });
+        // Apply focus filters
+        const activeFocusFilters = Array.from(
+          document.querySelectorAll(
+            '#focusFilters .filter-btn.active:not([data-filter="all"])'
+          )
+        ).map((btn) => btn.dataset.filter)
+
+        if (activeFocusFilters.length > 0) {
+          filtered = filtered.filter((game) => {
+            return activeFocusFilters.includes(game.glowny_fokus)
+          })
         }
 
-        // Filter event listeners setup (for dynamically generated filters)
-        function setupFilterEventListeners() {
-            // Filter buttons - these are generated dynamically so we add listeners after creation
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                // Remove existing listeners to avoid duplicates
-                btn.removeEventListener('click', handleFilter);
-                btn.addEventListener('click', handleFilter);
-            });
-            
-            console.log('✅ Filter event listeners setup complete');
+        // Apply player filters
+        const activePlayerFilters = Array.from(
+          document.querySelectorAll(
+            '#playerFilters .filter-btn.active:not([data-filter="all"])'
+          )
+        ).map((btn) => btn.dataset.filter)
+
+        if (activePlayerFilters.length > 0) {
+          filtered = filtered.filter((game) => {
+            return activePlayerFilters.some((filter) => {
+              if (filter === "2") return game.minimalna_liczba_graczy === 2
+              if (filter === "3-5")
+                return (
+                  game.minimalna_liczba_graczy >= 3 &&
+                  game.minimalna_liczba_graczy <= 5
+                )
+              if (filter === "6+") return game.minimalna_liczba_graczy >= 6
+              return false
+            })
+          })
         }
 
-        function toggleFilters() {
-            filtersOpen = !filtersOpen;
-            filterToggle.classList.toggle('active', filtersOpen);
-            filtersContent.classList.toggle('open', filtersOpen);
-        }
+        return filtered
+      }
 
-        function handleSearch(e) {
-            filterAndSort();
-        }
+      function sortGames(games, sortBy) {
+        const sorted = [...games]
 
-        function clearSearch() {
-            searchInput.value = '';
-            filterAndSort();
+        switch (sortBy) {
+          case "nazwa":
+            return sorted.sort((a, b) => a.nazwa.localeCompare(b.nazwa, "pl"))
+          case "nazwa-desc":
+            return sorted.sort((a, b) => b.nazwa.localeCompare(a.nazwa, "pl"))
+          case "players":
+            return sorted.sort(
+              (a, b) => a.minimalna_liczba_graczy - b.minimalna_liczba_graczy
+            )
+          case "kategoria":
+            return sorted.sort((a, b) =>
+              a.kategoria.localeCompare(b.kategoria, "pl")
+            )
+          case "fokus":
+            return sorted.sort((a, b) =>
+              a.glowny_fokus.localeCompare(b.glowny_fokus, "pl")
+            )
+          default:
+            return sorted.sort((a, b) =>
+              a.nr_katalogowy.localeCompare(b.nr_katalogowy)
+            )
         }
+      }
 
-        function filterGames(searchTerm, filters) {
-            let filtered = [...gameData];
-            
-            // Apply search filter
-            if (searchTerm) {
-                const terms = searchTerm.toLowerCase().split(' ');
-                filtered = filtered.filter(game => {
-                    const searchText = `${game.nazwa} ${game.nazwa_ang} ${game.opis} ${game.opis_ang} ${game.kategoria} ${game.glowny_fokus}`.toLowerCase();
-                    return terms.every(term => searchText.includes(term));
-                });
-            }
-            
-            // Apply category filters
-            const activeFilters = Array.from(document.querySelectorAll('#categoryFilters .filter-btn.active:not([data-filter="all"])'))
-                .map(btn => btn.dataset.filter);
-            
-            if (activeFilters.length > 0) {
-                filtered = filtered.filter(game => {
-                    return activeFilters.includes(game.kategoria);
-                });
-            }
-            
-            // Apply focus filters
-            const activeFocusFilters = Array.from(document.querySelectorAll('#focusFilters .filter-btn.active:not([data-filter="all"])'))
-                .map(btn => btn.dataset.filter);
-            
-            if (activeFocusFilters.length > 0) {
-                filtered = filtered.filter(game => {
-                    return activeFocusFilters.includes(game.glowny_fokus);
-                });
-            }
-            
-            // Apply player filters
-            const activePlayerFilters = Array.from(document.querySelectorAll('#playerFilters .filter-btn.active:not([data-filter="all"])'))
-                .map(btn => btn.dataset.filter);
-            
-            if (activePlayerFilters.length > 0) {
-                filtered = filtered.filter(game => {
-                    return activePlayerFilters.some(filter => {
-                        if (filter === '2') return game.minimalna_liczba_graczy === 2;
-                        if (filter === '3-5') return game.minimalna_liczba_graczy >= 3 && game.minimalna_liczba_graczy <= 5;
-                        if (filter === '6+') return game.minimalna_liczba_graczy >= 6;
-                        return false;
-                    });
-                });
-            }
-            
-            return filtered;
-        }
+      function filterAndSort() {
+        const searchTerm = searchInput.value.trim()
 
-        function sortGames(games, sortBy) {
-            const sorted = [...games];
-            
-            switch (sortBy) {
-                case 'nazwa':
-                    return sorted.sort((a, b) => a.nazwa.localeCompare(b.nazwa, 'pl'));
-                case 'nazwa-desc':
-                    return sorted.sort((a, b) => b.nazwa.localeCompare(a.nazwa, 'pl'));
-                case 'players':
-                    return sorted.sort((a, b) => a.minimalna_liczba_graczy - b.minimalna_liczba_graczy);
-                case 'kategoria':
-                    return sorted.sort((a, b) => a.kategoria.localeCompare(b.kategoria, 'pl'));
-                case 'fokus':
-                    return sorted.sort((a, b) => a.glowny_fokus.localeCompare(b.glowny_fokus, 'pl'));
-                default:
-                    return sorted.sort((a, b) => a.nr_katalogowy.localeCompare(b.nr_katalogowy));
-            }
-        }
+        filteredData = filterGames(searchTerm, {})
+        filteredData = sortGames(filteredData, currentSort)
 
-        function filterAndSort() {
-            const searchTerm = searchInput.value.trim();
-            
-            filteredData = filterGames(searchTerm, {});
-            filteredData = sortGames(filteredData, currentSort);
-            
-            renderGames(filteredData);
-            updateCounts();
-        }
+        renderGames(filteredData)
+        updateCounts()
+      }
 
-        function renderGames(games) {
-            if (games.length === 0) {
-                gamesContainer.innerHTML = `
+      function renderGames(games) {
+        if (games.length === 0) {
+          gamesContainer.innerHTML = `
                     <div class="no-results">
                         <div class="no-results-icon">🎭</div>
                         <div class="no-results-title">Brak wyników</div>
                         <div class="no-results-text">Spróbuj zmienić kryteria wyszukiwania</div>
                     </div>
-                `;
-                return;
-            }
+                `
+          return
+        }
 
-            gamesContainer.innerHTML = games.map(game => `
-                <article class="game-card ${selectedGames.has(game.nr_katalogowy) ? 'selected' : ''}" 
+        gamesContainer.innerHTML = games
+          .map(
+            (game) => `
+                <article class="game-card ${
+                  selectedGames.has(game.nr_katalogowy) ? "selected" : ""
+                }" 
                          data-id="${game.nr_katalogowy}">
                     <input type="checkbox" class="game-checkbox" 
-                           ${selectedGames.has(game.nr_katalogowy) ? 'checked' : ''}
-                           onchange="toggleGameSelection('${game.nr_katalogowy}')">
+                           id="game-checkbox-${game.nr_katalogowy}"
+                           ${
+                             selectedGames.has(game.nr_katalogowy)
+                               ? "checked"
+                               : ""
+                           }>
                     
                     <header class="game-header">
                         <div class="game-number">#${game.nr_katalogowy}</div>
                         <div class="game-titles">
                             <h2 class="game-title">${game.nazwa}</h2>
-                            <div class="game-title-en">${game.nazwa_ang}</div>
+                            <div class="game-title-en">${
+                              game.nazwa_ang || ""
+                            }</div>
                         </div>
                     </header>
                     
@@ -1171,153 +1326,245 @@
                     
                     <footer class="game-meta">
                         <div class="game-tags">
-                            <span class="game-tag category">${game.kategoria}</span>
+                            <span class="game-tag category">${
+                              game.kategoria
+                            }</span>
                             <span class="game-tag">${game.glowny_fokus}</span>
                         </div>
-                        <div class="game-players">${game.minimalna_liczba_graczy}+ graczy</div>
+                        <div class="game-players">${
+                          game.minimalna_liczba_graczy
+                        }+ graczy</div>
                     </footer>
                 </article>
-            `).join('');
-        }
+            `
+          )
+          .join("")
 
-        function toggleGameSelection(gameId) {
-            if (selectedGames.has(gameId)) {
-                selectedGames.delete(gameId);
-            } else {
-                selectedGames.add(gameId);
+        // Add event listeners to newly rendered checkboxes and game cards
+        games.forEach((game) => {
+          const gameCard = document.querySelector(
+            `.game-card[data-id="${game.nr_katalogowy}"]`
+          )
+          if (gameCard) {
+            // Clicking the card itself should also toggle selection
+            gameCard.removeEventListener("click", handleGameCardClick) // Remove to prevent duplicates
+            gameCard.addEventListener("click", handleGameCardClick)
+
+            // Ensure the checkbox itself also triggers the toggle
+            const checkbox = gameCard.querySelector(".game-checkbox")
+            if (checkbox) {
+              checkbox.removeEventListener("change", (e) => e.stopPropagation()) // Remove if exists
+              checkbox.removeEventListener("change", (e) =>
+                toggleGameSelection(game.nr_katalogowy)
+              ) // Remove if exists
+              checkbox.addEventListener("change", (e) => {
+                e.stopPropagation() // Prevent card click from firing twice
+                toggleGameSelection(game.nr_katalogowy)
+              })
             }
-            updateCounts();
-            renderGames(filteredData);
-            
-            // Show/hide export bar
-            if (selectedGames.size > 0) {
-                exportBar.classList.add('visible');
-            } else {
-                exportBar.classList.remove('visible');
-            }
+          }
+        })
+      }
+
+      function handleGameCardClick(event) {
+        // Prevent toggling if the click originated from the checkbox itself
+        if (event.target.classList.contains("game-checkbox")) {
+          return
+        }
+        const gameId = this.dataset.id
+        const checkbox = this.querySelector(".game-checkbox")
+        if (checkbox) {
+          checkbox.checked = !checkbox.checked // Manually toggle checkbox state
+        }
+        toggleGameSelection(gameId)
+      }
+
+      function toggleGameSelection(gameId) {
+        if (selectedGames.has(gameId)) {
+          selectedGames.delete(gameId)
+        } else {
+          selectedGames.add(gameId)
+        }
+        updateCounts()
+        // No need to re-render all games if only selection state changes
+        const gameCard = document.querySelector(
+          `.game-card[data-id="${gameId}"]`
+        )
+        if (gameCard) {
+          gameCard.classList.toggle("selected", selectedGames.has(gameId))
         }
 
-        function updateCounts() {
-            const count = filteredData.length;
-            resultsCount.textContent = `${count} ${count === 1 ? 'gra' : count < 5 ? 'gry' : 'gier'}`;
-            selectedCount.textContent = selectedGames.size;
-            document.getElementById('totalGames').textContent = gameData.length;
+        // Show/hide export bar
+        if (selectedGames.size > 0) {
+          exportBar.classList.add("visible")
+        } else {
+          exportBar.classList.remove("visible")
+        }
+      }
+
+      function updateCounts() {
+        const totalGames = gameData.length // Use original gameData length for total
+        document.getElementById("totalGames").textContent = totalGames
+
+        const count = filteredData.length
+        resultsCount.textContent = `${count} ${
+          count === 1 ? "gra" : count < 5 && count !== 0 ? "gry" : "gier"
+        }`
+        selectedCount.textContent = selectedGames.size
+      }
+
+      function handleFilter(e) {
+        const btn = e.target.closest(".filter-btn") // Ensure btn is the actual button element
+        if (!btn) return
+
+        const filterGroup = btn.closest(".filters")
+        const isAllButton = btn.dataset.filter === "all"
+
+        if (isAllButton) {
+          filterGroup
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"))
+          btn.classList.add("active")
+        } else {
+          const allButton = filterGroup.querySelector('[data-filter="all"]')
+          if (allButton) {
+            allButton.classList.remove("active")
+          }
+
+          btn.classList.toggle("active")
+
+          const activeFilters = filterGroup.querySelectorAll(
+            '.filter-btn.active:not([data-filter="all"])'
+          )
+          if (activeFilters.length === 0 && allButton) {
+            allButton.classList.add("active")
+          }
         }
 
-        function handleFilter(e) {
-            const btn = e.target;
-            const filterGroup = btn.closest('.filters');
-            const isAllButton = btn.dataset.filter === 'all';
-            
-            if (isAllButton) {
-                // If "all" button clicked, deactivate all others in group
-                filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            } else {
-                // If specific filter clicked, deactivate "all" button and toggle this one
-                const allButton = filterGroup.querySelector('[data-filter="all"]');
-                if (allButton) {
-                    allButton.classList.remove('active');
-                }
-                
-                // Toggle the clicked button
-                btn.classList.toggle('active');
-                
-                // If no filters are active, activate "all" button
-                const activeFilters = filterGroup.querySelectorAll('.filter-btn.active:not([data-filter="all"])');
-                if (activeFilters.length === 0 && allButton) {
-                    allButton.classList.add('active');
-                }
-            }
-            
-            filterAndSort();
-        }
+        filterAndSort()
+      }
 
-        function handleSort(e) {
-            currentSort = e.target.value;
-            filterAndSort();
-        }
+      function handleSort(e) {
+        currentSort = e.target.value
+        filterAndSort()
+      }
 
-        function handleExportType(e) {
-            document.querySelectorAll('.export-option').forEach(opt => opt.classList.remove('active'));
-            e.target.closest('.export-option').classList.add('active');
-            selectedExportType = e.target.closest('.export-option').dataset.type;
-        }
+      function handleExportType(e) {
+        // Find the actual .export-option element even if a child was clicked
+        const selectedOption = e.target.closest(".export-option")
+        if (!selectedOption) return
 
-        function showExportModal() {
-            if (selectedGames.size === 0) {
-                alert('Wybierz gry do eksportu');
-                return;
-            }
-            exportModal.style.display = 'flex';
-        }
+        document
+          .querySelectorAll(".export-option")
+          .forEach((opt) => opt.classList.remove("active"))
+        selectedOption.classList.add("active")
+        selectedExportType = selectedOption.dataset.type
+      }
 
-        function hideExportModal() {
-            exportModal.style.display = 'none';
-            handleExport();
+      function showExportModal() {
+        if (selectedGames.size === 0) {
+          alert("Wybierz gry do eksportu")
+          return
         }
+        exportModal.style.display = "flex"
+      }
 
-        function handleExport() {
-            const selectedData = gameData.filter(game => selectedGames.has(game.nr_katalogowy));
-            const exportText = generateExportText(selectedData);
-            
-            switch (selectedExportType) {
-                case 'clipboard':
-                    navigator.clipboard.writeText(exportText).then(() => {
-                        showExportSuccess(`Skopiowano ${selectedGames.size} gier do schowka`);
-                    });
-                    break;
-                case 'sms':
-                    window.open(`sms:?body=${encodeURIComponent(exportText.substring(0, 160))}`);
-                    break;
-                case 'email':
-                    window.open(`mailto:?subject=Gry Impro&body=${encodeURIComponent(exportText)}`);
-                    break;
-                case 'whatsapp':
-                    window.open(`https://wa.me/?text=${encodeURIComponent(exportText)}`);
-                    break;
-            }
+      function hideExportModal() {
+        exportModal.style.display = "none"
+        // handleExport() is called when the user clicks 'Eksportuj' and then closes modal,
+        // or when they click X or outside. Let's make sure it's only called on a definitive export action.
+        // For now, it's called on modal close, which might be okay.
+        // If you want "Export" button in modal to trigger it, move handleExport() call there.
+        // For now, keeping current behavior.
+      }
+
+      function handleExport() {
+        const selectedData = gameData.filter((game) =>
+          selectedGames.has(game.nr_katalogowy)
+        )
+        if (selectedData.length === 0) {
+          // This shouldn't happen if showExportModal checks for selectedGames.size > 0
+          // but good for robustness.
+          console.warn("No games selected for export.")
+          return
         }
+        const exportText = generateExportText(selectedData)
 
-        function generateExportText(games) {
-            const includeDesc = document.getElementById('includeDescription').checked;
-            const includeEng = document.getElementById('includeEnglish').checked;
-            const includeNumbers = document.getElementById('includeNumbers').checked;
-            
-            return games.map(game => {
-                let text = '';
-                if (includeNumbers) text += `${game.nr_katalogowy}. `;
-                text += game.nazwa;
-                if (includeEng) text += ` (${game.nazwa_ang})`;
-                text += '\n';
-                if (includeDesc) text += `${game.opis}\n`;
-                text += `Graczy: ${game.minimalna_liczba_graczy}+\n`;
-                text += `Kategoria: ${game.kategoria}\n`;
-                text += `Fokus: ${game.glowny_fokus}\n`;
-                return text;
-            }).join('\n---\n');
+        switch (selectedExportType) {
+          case "clipboard":
+            navigator.clipboard
+              .writeText(exportText)
+              .then(() => {
+                showExportSuccess(
+                  `Skopiowano ${selectedGames.size} gier do schowka`
+                )
+              })
+              .catch((err) => {
+                console.error("Failed to copy text: ", err)
+                alert("Nie udało się skopiować do schowka. Spróbuj ręcznie.")
+              })
+            break
+          case "sms":
+            window.open(
+              `sms:?body=${encodeURIComponent(exportText.substring(0, 160))}`
+            )
+            break
+          case "email":
+            window.open(
+              `mailto:?subject=Gry Impro&body=${encodeURIComponent(exportText)}`
+            )
+            break
+          case "whatsapp":
+            window.open(`https://wa.me/?text=${encodeURIComponent(exportText)}`)
+            break
         }
+      }
 
-        function showExportSuccess(message) {
-            const originalText = document.getElementById('exportBtn').textContent;
-            document.getElementById('exportBtn').textContent = '✓ Eksportowano';
-            document.getElementById('exportBtn').style.background = 'var(--success-green)';
-            
-            setTimeout(() => {
-                document.getElementById('exportBtn').textContent = originalText;
-                document.getElementById('exportBtn').style.background = '';
-            }, 2000);
-        }
+      function generateExportText(games) {
+        const includeDesc =
+          document.getElementById("includeDescription").checked
+        const includeEng = document.getElementById("includeEnglish").checked
+        const includeNumbers = document.getElementById("includeNumbers").checked
 
-        function clearSelection() {
-            selectedGames.clear();
-            updateCounts();
-            renderGames(filteredData);
-            exportBar.classList.remove('visible');
-        }
+        return games
+          .map((game) => {
+            let text = ""
+            if (includeNumbers) text += `${game.nr_katalogowy}. `
+            text += game.nazwa
+            if (includeEng && game.nazwa_ang) text += ` (${game.nazwa_ang})` // Only add if nazwa_ang exists
+            text += "\n"
+            if (includeDesc && game.opis) text += `${game.opis}\n` // Only add if opis exists
+            text += `Graczy: ${game.minimalna_liczba_graczy}+\n`
+            text += `Kategoria: ${game.kategoria}\n`
+            text += `Fokus: ${game.glowny_fokus}\n`
+            return text
+          })
+          .join("\n---\n")
+      }
 
-        // Initialize the application
-        init();
+      function showExportSuccess(message) {
+        const exportBtn = document.getElementById("exportBtn")
+        const originalText = exportBtn.textContent
+        const originalBackground = exportBtn.style.background
+
+        exportBtn.textContent = "✓ Eksportowano"
+        exportBtn.style.background = "var(--success-green)"
+
+        setTimeout(() => {
+          exportBtn.textContent = originalText
+          exportBtn.style.background = originalBackground // Revert to original background
+        }, 2000)
+      }
+
+      function clearSelection() {
+        selectedGames.clear()
+        updateCounts()
+        renderGames(filteredData) // Re-render to update checkboxes and card selection
+        exportBar.classList.remove("visible")
+      }
+
+      // Initialize the application
+      init()
     </script>
-</body>
+  </body>
 </html>
