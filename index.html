@@ -1,516 +1,1292 @@
 <!DOCTYPE html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Katalog Gier Improwizacyjnych</title>
-    <!-- Ładowanie fontu Inter z Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impro Games — Mobile Neo-Bauhaus</title>
     <style>
-      /* Globalne style */
-      body {
-        font-family: "Inter", sans-serif;
-        margin: 0;
-        padding: 0;
-        background: linear-gradient(
-          to bottom right,
-          #e0f2fe,
-          #fce4ec,
-          #e0f7fa
-        ); /* Delikatny gradient tła */
-        color: #333;
-        line-height: 1.6;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        box-sizing: border-box;
-      }
-
-      .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        box-sizing: border-box;
-      }
-
-      /* Nagłówek */
-      header {
-        text-align: center;
-        margin-bottom: 40px;
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      header:hover {
-        transform: translateY(-5px);
-      }
-
-      header h1 {
-        font-size: 3.5em; /* Większy rozmiar dla nagłówka */
-        font-weight: 800;
-        margin-bottom: 10px;
-        background: linear-gradient(
-          to right,
-          #8b5cf6,
-          #ec4899
-        ); /* Gradient dla tekstu */
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        letter-spacing: -1px;
-      }
-
-      header p {
-        font-size: 1.3em;
-        color: #666;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-
-      /* Sekcja wyszukiwania i filtrów */
-      .filters-section {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-        margin-bottom: 40px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .filter-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #555;
-        font-size: 0.95em;
-      }
-
-      .filter-group input,
-      .filter-group select {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        font-size: 1em;
-        box-sizing: border-box;
-        transition: border-color 0.3s, box-shadow 0.3s;
-        -webkit-appearance: none; /* Usuwa domyślny styl select na WebKit */
-        -moz-appearance: none; /* Usuwa domyślny styl select na Firefox */
-        appearance: none;
-        background-color: #f9f9f9;
-      }
-
-      .filter-group input:focus,
-      .filter-group select:focus {
-        border-color: #8b5cf6;
-        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-        outline: none;
-      }
-
-      .filter-group select {
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%00-13-5.4H18.4c-6.5%200-12.3%203.2-16.1%208.1-3.8%204.9-4.7%2011-2.9%2017.1l132%20176.4c3.8%205.1%209.7%208.2%2016.4%208.2s12.6-3.1%2016.4-8.2l132-176.4c3.8-6.1%202.9-12.2-2.9-17.1z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px top 50%;
-        background-size: 12px auto;
-      }
-
-      /* Lista gier */
-      .game-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        width: 100%;
-        box-sizing: border-box;
-        max-height: calc(100vh - 400px); /* Dostosuj wysokość przewijania */
-        overflow-y: auto;
-        padding-right: 15px; /* Zapobiega zakrywaniu scrollbara */
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-      }
-
-      .game-list::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera*/
-      }
-
-      .game-card {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        border-top: 8px solid #a78bfa; /* Fioletowa górna ramka */
-        border-bottom: 8px solid #a78bfa; /* Fioletowa dolna ramka */
-        display: flex;
-        flex-direction: column;
-      }
-
-      .game-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-        border-color: #6366f1; /* Zmiana koloru ramki na hover */
-      }
-
-      .game-card h2 {
-        font-size: 2em;
-        font-weight: 700;
-        color: #6b21a8; /* Ciemny fiolet */
-        margin-bottom: 10px;
-        line-height: 1.2;
-      }
-
-      .game-card .english-name {
-        font-style: italic;
-        color: #777;
-        margin-bottom: 15px;
-        font-size: 1.1em;
-      }
-
-      .game-card p {
-        color: #555;
-        margin-bottom: 15px;
-        flex-grow: 1; /* Pozwala opisowi zająć dostępną przestrzeń */
-      }
-
-      .game-details-en {
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-      }
-
-      .game-details-en h3 {
-        font-size: 1.2em;
-        font-weight: 600;
-        color: #6d28d9; /* Fiolet */
-        margin-bottom: 10px;
-      }
-
-      .game-details-en p {
-        margin-bottom: 8px;
-        color: #555;
-      }
-
-      .game-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 15px;
-      }
-
-      .game-tags span {
-        background-color: #f3e8ff; /* Jasny fiolet */
-        color: #6b21a8; /* Ciemny fiolet */
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 0.9em;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
-
-      .game-tags span:nth-child(2) {
-        /* Fokus */
-        background-color: #e0f2fe; /* Jasny niebieski */
-        color: #1e40af; /* Ciemny niebieski */
-      }
-
-      .game-tags span:nth-child(3) {
-        /* Gracze */
-        background-color: #dcfce7; /* Jasny zielony */
-        color: #166534; /* Ciemny zielony */
-      }
-
-      .toggle-button {
-        background: linear-gradient(
-          to right,
-          #8b5cf6,
-          #ec4899
-        ); /* Gradient na przycisku */
-        color: #fff;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1.1em;
-        font-weight: 700;
-        margin-top: auto; /* Przycisk zawsze na dole karty */
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        width: 100%; /* Przycisk na całą szerokość */
-      }
-
-      .toggle-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-      }
-
-      .no-games-message {
-        grid-column: 1 / -1; /* Rozciągnij na całą szerokość siatki */
-        text-align: center;
-        font-size: 1.8em;
-        color: #777;
-        padding: 50px;
-        background-color: #fff;
-        border-radius: 20px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
-      }
-
-      /* Responsywność */
-      @media (max-width: 768px) {
-        header h1 {
-          font-size: 2.5em;
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        header p {
-          font-size: 1em;
+        
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --accent-red: #ff0000;
+            --light-gray: #f8f8f8;
+            --medium-gray: #666666;
+            --border-gray: #e0e0e0;
+            --hover-gray: #f0f0f0;
+            --success-green: #00ff00;
         }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--primary-white);
+            color: var(--primary-black);
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* MOBILE-FIRST HEADER */
+        .header {
+            border-bottom: 1px solid var(--primary-black);
+            padding: 20px 15px;
+            background: var(--primary-white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-weight: 300;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            line-height: 0.9;
+        }
+        
+        .header-stats {
+            text-align: right;
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            line-height: 1.4;
+        }
+        
+        .red-accent {
+            color: var(--accent-red);
+        }
+        
+        /* MOBILE SEARCH */
+        .search-section {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-gray);
+            background: var(--light-gray);
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid var(--primary-black);
+            background: transparent;
+            padding: 10px 0;
+            font-size: 16px; /* Prevents zoom on iOS */
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 400;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-bottom-color: var(--accent-red);
+        }
+        
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--medium-gray);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            touch-action: manipulation;
+        }
+        
+        .search-input:not(:placeholder-shown) + .search-clear {
+            opacity: 1;
+        }
+        
+        .search-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--medium-gray);
+            margin-top: 10px;
+        }
+        
+        .results-count {
+            color: var(--accent-red);
+        }
+        
+        /* MOBILE FILTERS */
+        .filters-container {
+            background: var(--primary-white);
+            border-bottom: 1px solid var(--border-gray);
+        }
+        
+        .filter-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: none;
+            border: none;
+            width: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .filter-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .filter-toggle.active .filter-toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .filters-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .filters-content.open {
+            max-height: 500px;
+        }
+        
         .filters-section {
-          grid-template-columns: 1fr;
+            border-top: 1px solid var(--border-gray);
+            padding: 15px;
         }
-        .game-list {
-          grid-template-columns: 1fr;
+        
+        .filters-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--medium-gray);
+            margin-bottom: 10px;
         }
-        .game-card h2 {
-          font-size: 1.6em;
+        
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--primary-black);
+            margin-bottom: 15px;
         }
-      }
+        
+        .filter-btn {
+            background: var(--primary-white);
+            border: none;
+            padding: 12px 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            text-align: center;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-black);
+            color: var(--primary-white);
+        }
+        
+        .filter-btn .count {
+            font-size: 8px;
+            opacity: 0.7;
+            margin-left: 3px;
+        }
+        
+        /* MOBILE SORT */
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 15px;
+            margin-bottom: 15px;
+        }
+        
+        .sort-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--medium-gray);
+            white-space: nowrap;
+        }
+        
+        .sort-select {
+            flex: 1;
+            border: 1px solid var(--border-gray);
+            background: var(--primary-white);
+            padding: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* MOBILE EXPORT BAR */
+        .export-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary-black);
+            color: var(--primary-white);
+            padding: 15px;
+            z-index: 200;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .export-bar.visible {
+            transform: translateY(0);
+        }
+        
+        .export-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .export-info {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .export-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .export-btn {
+            background: var(--accent-red);
+            color: var(--primary-white);
+            border: none;
+            padding: 8px 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .export-btn.secondary {
+            background: var(--primary-white);
+            color: var(--primary-black);
+        }
+        
+        /* MOBILE GAMES LIST */
+        .games-container {
+            padding-bottom: 80px; /* Space for export bar */
+        }
+        
+        .game-card {
+            background: var(--primary-white);
+            border-bottom: 1px solid var(--border-gray);
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        
+        .game-card:hover {
+            background: var(--hover-gray);
+        }
+        
+        .game-card.selected {
+            background: var(--light-gray);
+            border-left: 4px solid var(--accent-red);
+            padding-left: 11px;
+        }
+        
+        .game-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .game-header {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 15px;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .game-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .game-titles {
+            min-width: 0;
+            margin-right: 25px; /* Space for checkbox */
+        }
+        
+        .game-title {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 3px;
+        }
+        
+        .game-title-en {
+            font-size: 12px;
+            font-weight: 300;
+            color: var(--medium-gray);
+            font-style: italic;
+        }
+        
+        .game-description {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .game-meta {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-gray);
+        }
+        
+        .game-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .game-tag {
+            font-size: 9px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--medium-gray);
+            background: var(--light-gray);
+            padding: 4px 8px;
+            border-radius: 2px;
+        }
+        
+        .game-tag.category {
+            color: var(--accent-red);
+            background: var(--primary-white);
+            border: 1px solid var(--accent-red);
+        }
+        
+        .game-players {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-red);
+            text-align: right;
+        }
+        
+        /* MODAL FOR EXPORT */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal {
+            background: var(--primary-white);
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .modal-content {
+            padding: 20px;
+        }
+        
+        .export-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .export-option {
+            padding: 15px;
+            border: 1px solid var(--border-gray);
+            background: var(--primary-white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            touch-action: manipulation;
+        }
+        
+        .export-option:hover {
+            background: var(--hover-gray);
+        }
+        
+        .export-option.active {
+            background: var(--primary-black);
+            color: var(--primary-white);
+        }
+        
+        .export-option-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .export-option-text {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .export-settings {
+            border-top: 1px solid var(--border-gray);
+            padding-top: 15px;
+        }
+        
+        .export-setting {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .export-checkbox {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .export-setting-label {
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* FAB for filters on small screens */
+        .filter-fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary-black);
+            color: var(--primary-white);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 150;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+        }
+        
+        /* LOADING STATE */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-gray);
+            border-top: 2px solid var(--accent-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* NO RESULTS */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--medium-gray);
+        }
+        
+        .no-results-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .no-results-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .no-results-text {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        /* TABLET AND DESKTOP ADJUSTMENTS */
+        @media (min-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+            
+            .filters {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .export-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .games-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            .filter-fab {
+                display: none;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .filters {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .games-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1px;
+                background: var(--border-gray);
+            }
+            
+            .game-card {
+                border-bottom: none;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <header>
-        <h1>Katalog Gier Improwizacyjnych</h1>
-        <p>
-          Odkryj fascynujący świat improwizacji i znajdź idealną grę dla swojej
-          grupy!
-        </p>
-      </header>
-
-      <section class="filters-section">
-        <div class="filter-group">
-          <label for="search">Szukaj gry:</label>
-          <input
-            type="text"
-            id="search"
-            placeholder="Wpisz nazwę lub opis..."
-          />
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>
+                impro<br>
+                <span class="red-accent">games</span>
+            </h1>
+            <div class="header-stats">
+                Baza gier improwizacyjnych<br>
+                <span class="red-accent" id="totalGames">5</span> pozycji<br>
+                Mobile 2024
+            </div>
         </div>
-
-        <div class="filter-group">
-          <label for="category">Kategoria:</label>
-          <select id="category">
-            <option value="">Wszystkie</option>
-          </select>
+    </header>
+    
+    <section class="search-section">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Szukaj gry..."
+                    id="searchInput"
+                >
+                <button class="search-clear" id="searchClear">×</button>
+            </div>
+            
+            <div class="search-meta">
+                <span>Szukaj w nazwach i opisach</span>
+                <span class="results-count" id="resultsCount">5 gier</span>
+            </div>
         </div>
-
-        <div class="filter-group">
-          <label for="focus">Główny Fokus:</label>
-          <select id="focus">
-            <option value="">Wszystkie</option>
-          </select>
+    </section>
+    
+    <div class="filters-container">
+        <button class="filter-toggle" id="filterToggle">
+            <span>Filtry i sortowanie</span>
+            <span class="filter-toggle-icon">▼</span>
+        </button>
+        
+        <div class="filters-content" id="filtersContent">
+            <div class="filters-section">
+                <div class="filters-label">Kategorie</div>
+                <div class="filters" id="categoryFilters">
+                    <button class="filter-btn active" data-filter="all">wszystkie</button>
+                    <button class="filter-btn" data-filter="collaboration">współpraca</button>
+                    <button class="filter-btn" data-filter="energy">energia</button>
+                    <button class="filter-btn" data-filter="storytelling">opowiadanie</button>
+                    <button class="filter-btn" data-filter="character">postać</button>
+                    <button class="filter-btn" data-filter="communication">komunikacja</button>
+                </div>
+            </div>
+            
+            <div class="filters-section">
+                <div class="filters-label">Liczba graczy</div>
+                <div class="filters" id="playerFilters">
+                    <button class="filter-btn active" data-filter="all">wszyscy</button>
+                    <button class="filter-btn" data-filter="2">2 graczy</button>
+                    <button class="filter-btn" data-filter="3-5">3-5 graczy</button>
+                    <button class="filter-btn" data-filter="6+">6+ graczy</button>
+                </div>
+            </div>
+            
+            <div class="sort-container">
+                <span class="sort-label">Sortowanie:</span>
+                <select class="sort-select" id="sortSelect">
+                    <option value="nr_katalogowy">Numer katalogowy</option>
+                    <option value="nazwa">Nazwa A-Z</option>
+                    <option value="nazwa-desc">Nazwa Z-A</option>
+                    <option value="players">Liczba graczy</option>
+                    <option value="kategoria">Kategoria</option>
+                    <option value="fokus">Główny fokus</option>
+                </select>
+            </div>
         </div>
-
-        <div class="filter-group">
-          <label for="minPlayers">Min. graczy:</label>
-          <select id="minPlayers">
-            <option value="">Wszystkie</option>
-          </select>
+    </div>
+    
+    <main class="games-container" id="gamesContainer">
+        <div class="loading">
+            <div class="spinner"></div>
         </div>
-      </section>
-
-      <section class="game-list" id="gameList">
-        <!-- Gry będą ładowane tutaj przez JavaScript -->
-        <div class="no-games-message" id="noGamesMessage" style="display: none">
-          Brak gier spełniających kryteria wyszukiwania. Spróbuj zmienić filtry!
+    </main>
+    
+    <div class="export-bar" id="exportBar">
+        <div class="export-content">
+            <div class="export-info">
+                Wybrano: <span id="selectedCount">0</span> gier
+            </div>
+            <div class="export-actions">
+                <button class="export-btn secondary" id="clearSelection">Wyczyść</button>
+                <button class="export-btn" id="exportBtn">Eksportuj</button>
+            </div>
         </div>
-      </section>
+    </div>
+    
+    <!-- Filter FAB for mobile -->
+    <button class="filter-fab" id="filterFab">⚙</button>
+    
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Eksport gier</div>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="export-options">
+                    <div class="export-option active" data-type="clipboard">
+                        <div class="export-option-icon">📋</div>
+                        <div class="export-option-text">Schowek</div>
+                    </div>
+                    <div class="export-option" data-type="sms">
+                        <div class="export-option-icon">📱</div>
+                        <div class="export-option-text">SMS</div>
+                    </div>
+                    <div class="export-option" data-type="email">
+                        <div class="export-option-icon">📧</div>
+                        <div class="export-option-text">Email</div>
+                    </div>
+                    <div class="export-option" data-type="whatsapp">
+                        <div class="export-option-icon">💬</div>
+                        <div class="export-option-text">WhatsApp</div>
+                    </div>
+                </div>
+                
+                <div class="export-settings">
+                    <div class="export-setting">
+                        <input type="checkbox" class="export-checkbox" id="includeDescription" checked>
+                        <label class="export-setting-label" for="includeDescription">Dołącz opisy</label>
+                    </div>
+                    <div class="export-setting">
+                        <input type="checkbox" class="export-checkbox" id="includeEnglish">
+                        <label class="export-setting-label" for="includeEnglish">Nazwy angielskie</label>
+                    </div>
+                    <div class="export-setting">
+                        <input type="checkbox" class="export-checkbox" id="includeNumbers">
+                        <label class="export-setting-label" for="includeNumbers">Numery katalogowe</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-      let allGames = [] // Przechowuje wszystkie gry
-      let expandedGames = {} // Przechowuje stan rozwinięcia kart
+        /*
+         * INSTRUKCJA UŻYCIA Z ZEWNĘTRZNYM PLIKIEM JSON:
+         * 
+         * 1. Utwórz plik 'impro_games_cleaned.json' w tym samym katalogu co ten plik HTML
+         * 2. Plik powinien zawierać tablicę obiektów z następującą strukturą:
+         * 
+         * [
+         *   {
+         *     "nr_katalogowy": "001",
+         *     "nazwa": "Nazwa gry po polsku",
+         *     "nazwa_ang": "English game name",
+         *     "opis": "Opis gry po polsku",
+         *     "opis_ang": "English description",
+         *     "kategoria": "Kategoria",
+         *     "glowny_fokus": "Główny fokus",
+         *     "minimalna_liczba_graczy": 2
+         *   }
+         * ]
+         * 
+         * 3. Jeśli plik nie zostanie znaleziony, aplikacja użyje przykładowych danych
+         * 4. Filtry będą automatycznie generowane na podstawie danych w pliku
+         */
 
-      const searchInput = document.getElementById("search")
-      const categorySelect = document.getElementById("category")
-      const focusSelect = document.getElementById("focus")
-      const minPlayersSelect = document.getElementById("minPlayers")
-      const gameListContainer = document.getElementById("gameList")
-      const noGamesMessage = document.getElementById("noGamesMessage")
-
-      // Funkcja do pobierania danych
-      async function fetchGames() {
-        try {
-          // Ścieżka do pliku JSON. Musi być w tym samym katalogu co index.html
-          const response = await fetch("impro_games_cleaned.json")
-          if (!response.ok) {
-            // Dodano bardziej szczegółowy komunikat błędu
-            throw new Error(
-              `Nie udało się załadować pliku danych: ${response.status} ${response.statusText}. Upewnij się, że 'impro_games_cleaned.json' znajduje się obok 'index.html'.`
-            )
-          }
-          const data = await response.json()
-          allGames = data
-          populateFilters()
-          renderGames()
-        } catch (error) {
-          gameListContainer.innerHTML = `<div class="no-games-message">Wystąpił błąd podczas ładowania danych: <br>${error.message}</div>`
-          console.error("Błąd ładowania danych:", error)
-        }
-      }
-
-      // Funkcja do wypełniania filtrów unikalnymi wartościami
-      function populateFilters() {
-        const categories = [
-          ...new Set(allGames.map((game) => game.kategoria)),
-        ].sort()
-        const focuses = [
-          ...new Set(allGames.map((game) => game.glowny_fokus)),
-        ].sort()
-        const maxPlayers =
-          allGames.length > 0
-            ? Math.max(...allGames.map((game) => game.minimalna_liczba_graczy))
-            : 0
-
-        categories.forEach((cat) => {
-          const option = document.createElement("option")
-          option.value = cat
-          option.textContent = cat
-          categorySelect.appendChild(option)
-        })
-
-        focuses.forEach((foc) => {
-          const option = document.createElement("option")
-          option.value = foc
-          option.textContent = foc
-          focusSelect.appendChild(option)
-        })
-
-        for (let i = 1; i <= maxPlayers; i++) {
-          const option = document.createElement("option")
-          option.value = i
-          option.textContent = `${i}+`
-          minPlayersSelect.appendChild(option)
-        }
-      }
-
-      // Funkcja do renderowania gier
-      function renderGames() {
-        gameListContainer.innerHTML = "" // Wyczyść listę przed ponownym renderowaniem
-
-        const searchTerm = searchInput.value.toLowerCase()
-        const selectedCategory = categorySelect.value
-        const selectedFocus = focusSelect.value
-        const minPlayers = parseInt(minPlayersSelect.value) || 0
-
-        const filteredGames = allGames.filter((game) => {
-          const matchesSearch =
-            game.nazwa.toLowerCase().includes(searchTerm) ||
-            game.nazwa_ang.toLowerCase().includes(searchTerm) ||
-            game.opis.toLowerCase().includes(searchTerm) ||
-            game.opis_ang.toLowerCase().includes(searchTerm)
-
-          const matchesCategory = selectedCategory
-            ? game.kategoria === selectedCategory
-            : true
-          const matchesFocus = selectedFocus
-            ? game.glowny_fokus === selectedFocus
-            : true
-          const matchesMinPlayers = minPlayers
-            ? game.minimalna_liczba_graczy >= minPlayers
-            : true
-
-          return (
-            matchesSearch &&
-            matchesCategory &&
-            matchesFocus &&
-            matchesMinPlayers
-          )
-        })
-
-        if (filteredGames.length === 0) {
-          noGamesMessage.style.display = "block"
-          return
-        } else {
-          noGamesMessage.style.display = "none"
-        }
-
-        filteredGames.forEach((game) => {
-          const gameCard = document.createElement("div")
-          gameCard.classList.add("game-card")
-
-          const isExpanded = expandedGames[game.nr_katalogowy]
-
-          gameCard.innerHTML = `
-                    <h2>${game.nazwa}</h2>
-                    ${
-                      isExpanded
-                        ? `<p class="english-name">(${game.nazwa_ang})</p>`
-                        : ""
-                    }
-                    <p>${game.opis}</p>
-
-                    ${
-                      isExpanded
-                        ? `
-                        <div class="game-details-en">
-                            <h3>Szczegóły (EN):</h3>
-                            <p><strong>Nazwa EN:</strong> ${game.nazwa_ang}</p>
-                            <p><strong>Opis EN:</strong> ${game.opis_ang}</p>
-                        </div>
-                    `
-                        : ""
-                    }
-
-                    <div class="game-tags">
-                        <span>Kategoria: ${game.kategoria}</span>
-                        <span>Fokus: ${game.glowny_fokus}</span>
-                        <span>Min. graczy: ${
-                          game.minimalna_liczba_graczy
-                        }</span>
-                    </div>
-                    <button class="toggle-button" data-id="${
-                      game.nr_katalogowy
-                    }">
-                        ${isExpanded ? "Pokaż mniej" : "Pokaż szczegóły (EN)"}
-                    </button>
-                `
-          gameListContainer.appendChild(gameCard)
-        })
-
-        // Dodaj nasłuchiwanie zdarzeń do nowo utworzonych przycisków
-        document.querySelectorAll(".toggle-button").forEach((button) => {
-          button.addEventListener("click", (event) => {
-            const gameId = event.target.dataset.id
-            expandedGames = {
-              ...expandedGames,
-              [gameId]: !expandedGames[gameId],
+        // Game data with new JSON structure (sample data - will be replaced if external JSON loads)
+        const gameData = [
+            {
+                "nr_katalogowy": "001",
+                "nazwa": "Tak, i...",
+                "nazwa_ang": "Yes, and...",
+                "opis": "Podstawowe ćwiczenie improwizacyjne uczące akceptowania i rozwijania pomysłów innych osób.",
+                "opis_ang": "Basic improvisation exercise teaching acceptance and building on others' ideas.",
+                "kategoria": "Współpraca",
+                "glowny_fokus": "Akceptacja",
+                "minimalna_liczba_graczy": 2
+            },
+            {
+                "nr_katalogowy": "002",
+                "nazwa": "Freeze Tag",
+                "nazwa_ang": "Freeze Tag",
+                "opis": "Energetyczna gra gdzie gracze tworzą sceny z zamrożonych pozycji innych graczy.",
+                "opis_ang": "Energetic game where players create scenes from frozen positions of other players.",
+                "kategoria": "Energia",
+                "glowny_fokus": "Fizyczność",
+                "minimalna_liczba_graczy": 6
+            },
+            {
+                "nr_katalogowy": "003",
+                "nazwa": "Jeden słowem na raz",
+                "nazwa_ang": "Word at a Time",
+                "opis": "Grupa tworzy wspólną historię, gdzie każdy gracz dodaje po jednym słowie.",
+                "opis_ang": "Group creates a shared story where each player adds one word at a time.",
+                "kategoria": "Opowiadanie",
+                "glowny_fokus": "Współpraca",
+                "minimalna_liczba_graczy": 3
+            },
+            {
+                "nr_katalogowy": "004",
+                "nazwa": "Podaj dalej",
+                "nazwa_ang": "Pass the Motion",
+                "opis": "Rytmiczne ćwiczenie rozgrzewające na przekazywanie gestów i dźwięków.",
+                "opis_ang": "Rhythmic warm-up exercise for passing gestures and sounds.",
+                "kategoria": "Rozgrzewka",
+                "glowny_fokus": "Rytm",
+                "minimalna_liczba_graczy": 6
+            },
+            {
+                "nr_katalogowy": "005",
+                "nazwa": "Ekspert",
+                "nazwa_ang": "Expert",
+                "opis": "Jeden gracz prowadzi wywiad z ekspertem od czegoś absurdalnego.",
+                "opis_ang": "One player interviews an expert on something absurd.",
+                "kategoria": "Postać",
+                "glowny_fokus": "Pewność siebie",
+                "minimalna_liczba_graczy": 2
             }
-            renderGames() // Ponowne renderowanie po zmianie stanu
-          })
-        })
-      }
+        ];
 
-      // Nasłuchiwanie zmian w filtrach
-      searchInput.addEventListener("input", renderGames)
-      categorySelect.addEventListener("change", renderGames)
-      focusSelect.addEventListener("change", renderGames)
-      minPlayersSelect.addEventListener("change", renderGames)
+        // Application state
+        let selectedGames = new Set();
+        let filteredData = [...gameData];
+        let currentSort = 'nr_katalogowy';
+        let selectedExportType = 'clipboard';
+        let filtersOpen = false;
 
-      // Inicjalizacja: pobierz dane po załadowaniu strony
-      document.addEventListener("DOMContentLoaded", fetchGames)
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        const resultsCount = document.getElementById('resultsCount');
+        const selectedCount = document.getElementById('selectedCount');
+        const gamesContainer = document.getElementById('gamesContainer');
+        const sortSelect = document.getElementById('sortSelect');
+        const filterToggle = document.getElementById('filterToggle');
+        const filtersContent = document.getElementById('filtersContent');
+        const exportBar = document.getElementById('exportBar');
+        const exportModal = document.getElementById('exportModal');
+
+        // Initialize application
+        function init() {
+            // Try to load data from external JSON file first
+            loadGameData().then(() => {
+                updateFiltersFromData();
+                renderGames(gameData);
+                updateCounts();
+                setupEventListeners();
+            }).catch(error => {
+                console.log('Using embedded sample data:', error.message);
+                updateFiltersFromData();
+                renderGames(gameData);
+                updateCounts();
+                setupEventListeners();
+            });
+        }
+
+        // Function to dynamically update filters based on loaded data
+        function updateFiltersFromData() {
+            // Get unique categories
+            const categories = [...new Set(gameData.map(game => game.kategoria))].sort();
+            const categoryFilters = document.getElementById('categoryFilters');
+            
+            // Keep the "all" button and add dynamic categories
+            const allButton = categoryFilters.querySelector('[data-filter="all"]');
+            categoryFilters.innerHTML = '';
+            categoryFilters.appendChild(allButton);
+            
+            categories.forEach(category => {
+                const count = gameData.filter(game => game.kategoria === category).length;
+                const button = document.createElement('button');
+                button.className = 'filter-btn';
+                button.dataset.filter = category;
+                button.innerHTML = `${category.toLowerCase()} <span class="count">(${count})</span>`;
+                button.addEventListener('click', handleFilter);
+                categoryFilters.appendChild(button);
+            });
+
+            // Get unique focuses
+            const focuses = [...new Set(gameData.map(game => game.glowny_fokus))].sort();
+            const focusFilters = document.getElementById('focusFilters');
+            
+            // Keep the "all" button and add dynamic focuses
+            const allFocusButton = focusFilters.querySelector('[data-filter="all"]');
+            focusFilters.innerHTML = '';
+            focusFilters.appendChild(allFocusButton);
+            
+            focuses.forEach(focus => {
+                const count = gameData.filter(game => game.glowny_fokus === focus).length;
+                const button = document.createElement('button');
+                button.className = 'filter-btn';
+                button.dataset.filter = focus;
+                button.innerHTML = `${focus.toLowerCase()} <span class="count">(${count})</span>`;
+                button.addEventListener('click', handleFilter);
+                focusFilters.appendChild(button);
+            });
+            
+            // Update "all" button counts
+            allButton.innerHTML = `wszystkie <span class="count">(${gameData.length})</span>`;
+            allFocusButton.innerHTML = `wszystkie <span class="count">(${gameData.length})</span>`;
+        }
+
+        // Function to load game data from external JSON file
+        async function loadGameData() {
+            try {
+                const response = await fetch('impro_games_cleaned.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                
+                // Validate data structure
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error('Invalid data format');
+                }
+                
+                // Check if first item has required fields
+                const requiredFields = ['nr_katalogowy', 'nazwa', 'nazwa_ang', 'opis', 'opis_ang', 'kategoria', 'glowny_fokus', 'minimalna_liczba_graczy'];
+                const firstItem = data[0];
+                const missingFields = requiredFields.filter(field => !(field in firstItem));
+                
+                if (missingFields.length > 0) {
+                    throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+                }
+                
+                // Replace sample data with loaded data
+                gameData.length = 0;
+                gameData.push(...data);
+                filteredData = [...gameData];
+                
+                console.log(`✅ Loaded ${data.length} games from JSON file`);
+            } catch (error) {
+                console.error('❌ Error loading JSON file:', error.message);
+                console.log('📝 Make sure "impro_games_cleaned.json" exists and has the correct structure');
+                throw error;
+            }
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Search functionality
+            searchInput.addEventListener('input', handleSearch);
+            searchClear.addEventListener('click', clearSearch);
+            
+            // Filter toggle
+            filterToggle.addEventListener('click', toggleFilters);
+            
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', handleFilter);
+            });
+            
+            // Sort functionality
+            sortSelect.addEventListener('change', handleSort);
+            
+            // Export functionality
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.addEventListener('click', handleExportType);
+            });
+            
+            document.getElementById('exportBtn').addEventListener('click', showExportModal);
+            document.getElementById('clearSelection').addEventListener('click', clearSelection);
+            
+            // Modal
+            document.getElementById('modalClose').addEventListener('click', hideExportModal);
+            exportModal.addEventListener('click', (e) => {
+                if (e.target === exportModal) hideExportModal();
+            });
+        }
+
+        function toggleFilters() {
+            filtersOpen = !filtersOpen;
+            filterToggle.classList.toggle('active', filtersOpen);
+            filtersContent.classList.toggle('open', filtersOpen);
+        }
+
+        function handleSearch(e) {
+            filterAndSort();
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            filterAndSort();
+        }
+
+        function filterGames(searchTerm, filters) {
+            let filtered = [...gameData];
+            
+            // Apply search filter
+            if (searchTerm) {
+                const terms = searchTerm.toLowerCase().split(' ');
+                filtered = filtered.filter(game => {
+                    const searchText = `${game.nazwa} ${game.nazwa_ang} ${game.opis} ${game.opis_ang} ${game.kategoria} ${game.glowny_fokus}`.toLowerCase();
+                    return terms.every(term => searchText.includes(term));
+                });
+            }
+            
+            // Apply category filters
+            const activeFilters = Array.from(document.querySelectorAll('#categoryFilters .filter-btn.active'))
+                .map(btn => btn.dataset.filter)
+                .filter(filter => filter !== 'all');
+            
+            if (activeFilters.length > 0) {
+                filtered = filtered.filter(game => {
+                    return activeFilters.includes(game.kategoria);
+                });
+            }
+            
+            // Apply focus filters
+            const activeFocusFilters = Array.from(document.querySelectorAll('#focusFilters .filter-btn.active'))
+                .map(btn => btn.dataset.filter)
+                .filter(filter => filter !== 'all');
+            
+            if (activeFocusFilters.length > 0) {
+                filtered = filtered.filter(game => {
+                    return activeFocusFilters.includes(game.glowny_fokus);
+                });
+            }
+            
+            // Apply player filters
+            const activePlayerFilters = Array.from(document.querySelectorAll('#playerFilters .filter-btn.active'))
+                .map(btn => btn.dataset.filter)
+                .filter(filter => filter !== 'all');
+            
+            if (activePlayerFilters.length > 0) {
+                filtered = filtered.filter(game => {
+                    return activePlayerFilters.some(filter => {
+                        if (filter === '2') return game.minimalna_liczba_graczy === 2;
+                        if (filter === '3-5') return game.minimalna_liczba_graczy >= 3 && game.minimalna_liczba_graczy <= 5;
+                        if (filter === '6+') return game.minimalna_liczba_graczy >= 6;
+                        return false;
+                    });
+                });
+            }
+            
+            return filtered;
+        }
+
+        function sortGames(games, sortBy) {
+            const sorted = [...games];
+            
+            switch (sortBy) {
+                case 'nazwa':
+                    return sorted.sort((a, b) => a.nazwa.localeCompare(b.nazwa, 'pl'));
+                case 'nazwa-desc':
+                    return sorted.sort((a, b) => b.nazwa.localeCompare(a.nazwa, 'pl'));
+                case 'players':
+                    return sorted.sort((a, b) => a.minimalna_liczba_graczy - b.minimalna_liczba_graczy);
+                case 'kategoria':
+                    return sorted.sort((a, b) => a.kategoria.localeCompare(b.kategoria, 'pl'));
+                case 'fokus':
+                    return sorted.sort((a, b) => a.glowny_fokus.localeCompare(b.glowny_fokus, 'pl'));
+                default:
+                    return sorted.sort((a, b) => a.nr_katalogowy.localeCompare(b.nr_katalogowy));
+            }
+        }
+
+        function filterAndSort() {
+            const searchTerm = searchInput.value.trim();
+            
+            filteredData = filterGames(searchTerm, {});
+            filteredData = sortGames(filteredData, currentSort);
+            
+            renderGames(filteredData);
+            updateCounts();
+        }
+
+        function renderGames(games) {
+            if (games.length === 0) {
+                gamesContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🎭</div>
+                        <div class="no-results-title">Brak wyników</div>
+                        <div class="no-results-text">Spróbuj zmienić kryteria wyszukiwania</div>
+                    </div>
+                `;
+                return;
+            }
+
+            gamesContainer.innerHTML = games.map(game => `
+                <article class="game-card ${selectedGames.has(game.nr_katalogowy) ? 'selected' : ''}" 
+                         data-id="${game.nr_katalogowy}">
+                    <input type="checkbox" class="game-checkbox" 
+                           ${selectedGames.has(game.nr_katalogowy) ? 'checked' : ''}
+                           onchange="toggleGameSelection('${game.nr_katalogowy}')">
+                    
+                    <header class="game-header">
+                        <div class="game-number">#${game.nr_katalogowy}</div>
+                        <div class="game-titles">
+                            <h2 class="game-title">${game.nazwa}</h2>
+                            <div class="game-title-en">${game.nazwa_ang}</div>
+                        </div>
+                    </header>
+                    
+                    <p class="game-description">${game.opis}</p>
+                    
+                    <footer class="game-meta">
+                        <div class="game-tags">
+                            <span class="game-tag category">${game.kategoria}</span>
+                            <span class="game-tag">${game.glowny_fokus}</span>
+                        </div>
+                        <div class="game-players">${game.minimalna_liczba_graczy}+ graczy</div>
+                    </footer>
+                </article>
+            `).join('');
+        }
+
+        function toggleGameSelection(gameId) {
+            if (selectedGames.has(gameId)) {
+                selectedGames.delete(gameId);
+            } else {
+                selectedGames.add(gameId);
+            }
+            updateCounts();
+            renderGames(filteredData);
+            
+            // Show/hide export bar
+            if (selectedGames.size > 0) {
+                exportBar.classList.add('visible');
+            } else {
+                exportBar.classList.remove('visible');
+            }
+        }
+
+        function updateCounts() {
+            const count = filteredData.length;
+            resultsCount.textContent = `${count} ${count === 1 ? 'gra' : count < 5 ? 'gry' : 'gier'}`;
+            selectedCount.textContent = selectedGames.size;
+            document.getElementById('totalGames').textContent = gameData.length;
+        }
+
+        function handleFilter(e) {
+            const btn = e.target;
+            const filterGroup = btn.closest('.filters');
+            
+            // Remove active from all in group
+            filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            
+            // Add active to clicked
+            btn.classList.add('active');
+            
+            filterAndSort();
+        }
+
+        function handleSort(e) {
+            currentSort = e.target.value;
+            filterAndSort();
+        }
+
+        function handleExportType(e) {
+            document.querySelectorAll('.export-option').forEach(opt => opt.classList.remove('active'));
+            e.target.closest('.export-option').classList.add('active');
+            selectedExportType = e.target.closest('.export-option').dataset.type;
+        }
+
+        function showExportModal() {
+            if (selectedGames.size === 0) {
+                alert('Wybierz gry do eksportu');
+                return;
+            }
+            exportModal.style.display = 'flex';
+        }
+
+        function hideExportModal() {
+            exportModal.style.display = 'none';
+            handleExport();
+        }
+
+        function handleExport() {
+            const selectedData = gameData.filter(game => selectedGames.has(game.nr_katalogowy));
+            const exportText = generateExportText(selectedData);
+            
+            switch (selectedExportType) {
+                case 'clipboard':
+                    navigator.clipboard.writeText(exportText).then(() => {
+                        showExportSuccess(`Skopiowano ${selectedGames.size} gier do schowka`);
+                    });
+                    break;
+                case 'sms':
+                    window.open(`sms:?body=${encodeURIComponent(exportText.substring(0, 160))}`);
+                    break;
+                case 'email':
+                    window.open(`mailto:?subject=Gry Impro&body=${encodeURIComponent(exportText)}`);
+                    break;
+                case 'whatsapp':
+                    window.open(`https://wa.me/?text=${encodeURIComponent(exportText)}`);
+                    break;
+            }
+        }
+
+        function generateExportText(games) {
+            const includeDesc = document.getElementById('includeDescription').checked;
+            const includeEng = document.getElementById('includeEnglish').checked;
+            const includeNumbers = document.getElementById('includeNumbers').checked;
+            
+            return games.map(game => {
+                let text = '';
+                if (includeNumbers) text += `${game.nr_katalogowy}. `;
+                text += game.nazwa;
+                if (includeEng) text += ` (${game.nazwa_ang})`;
+                text += '\n';
+                if (includeDesc) text += `${game.opis}\n`;
+                text += `Graczy: ${game.minimalna_liczba_graczy}+\n`;
+                text += `Kategoria: ${game.kategoria}\n`;
+                text += `Fokus: ${game.glowny_fokus}\n`;
+                return text;
+            }).join('\n---\n');
+        }
+
+        function showExportSuccess(message) {
+            const originalText = document.getElementById('exportBtn').textContent;
+            document.getElementById('exportBtn').textContent = '✓ Eksportowano';
+            document.getElementById('exportBtn').style.background = 'var(--success-green)';
+            
+            setTimeout(() => {
+                document.getElementById('exportBtn').textContent = originalText;
+                document.getElementById('exportBtn').style.background = '';
+            }, 2000);
+        }
+
+        function clearSelection() {
+            selectedGames.clear();
+            updateCounts();
+            renderGames(filteredData);
+            exportBar.classList.remove('visible');
+        }
+
+        // Initialize the application
+        init();
     </script>
-  </body>
+</body>
 </html>

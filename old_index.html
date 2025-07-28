@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Katalog Gier Improwizacyjnych</title>
+    <!-- Ładowanie fontu Inter z Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Globalne style */
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(
+          to bottom right,
+          #e0f2fe,
+          #fce4ec,
+          #e0f7fa
+        ); /* Delikatny gradient tła */
+        color: #333;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      /* Nagłówek */
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      header:hover {
+        transform: translateY(-5px);
+      }
+
+      header h1 {
+        font-size: 3.5em; /* Większy rozmiar dla nagłówka */
+        font-weight: 800;
+        margin-bottom: 10px;
+        background: linear-gradient(
+          to right,
+          #8b5cf6,
+          #ec4899
+        ); /* Gradient dla tekstu */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: -1px;
+      }
+
+      header p {
+        font-size: 1.3em;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* Sekcja wyszukiwania i filtrów */
+      .filters-section {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 0.95em;
+      }
+
+      .filter-group input,
+      .filter-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 1em;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        -webkit-appearance: none; /* Usuwa domyślny styl select na WebKit */
+        -moz-appearance: none; /* Usuwa domyślny styl select na Firefox */
+        appearance: none;
+        background-color: #f9f9f9;
+      }
+
+      .filter-group input:focus,
+      .filter-group select:focus {
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        outline: none;
+      }
+
+      .filter-group select {
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%00-13-5.4H18.4c-6.5%200-12.3%203.2-16.1%208.1-3.8%204.9-4.7%2011-2.9%2017.1l132%20176.4c3.8%205.1%209.7%208.2%2016.4%208.2s12.6-3.1%2016.4-8.2l132-176.4c3.8-6.1%202.9-12.2-2.9-17.1z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px top 50%;
+        background-size: 12px auto;
+      }
+
+      /* Lista gier */
+      .game-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        width: 100%;
+        box-sizing: border-box;
+        max-height: calc(100vh - 400px); /* Dostosuj wysokość przewijania */
+        overflow-y: auto;
+        padding-right: 15px; /* Zapobiega zakrywaniu scrollbara */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+
+      .game-list::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
+      }
+
+      .game-card {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-top: 8px solid #a78bfa; /* Fioletowa górna ramka */
+        border-bottom: 8px solid #a78bfa; /* Fioletowa dolna ramka */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .game-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        border-color: #6366f1; /* Zmiana koloru ramki na hover */
+      }
+
+      .game-card h2 {
+        font-size: 2em;
+        font-weight: 700;
+        color: #6b21a8; /* Ciemny fiolet */
+        margin-bottom: 10px;
+        line-height: 1.2;
+      }
+
+      .game-card .english-name {
+        font-style: italic;
+        color: #777;
+        margin-bottom: 15px;
+        font-size: 1.1em;
+      }
+
+      .game-card p {
+        color: #555;
+        margin-bottom: 15px;
+        flex-grow: 1; /* Pozwala opisowi zająć dostępną przestrzeń */
+      }
+
+      .game-details-en {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .game-details-en h3 {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #6d28d9; /* Fiolet */
+        margin-bottom: 10px;
+      }
+
+      .game-details-en p {
+        margin-bottom: 8px;
+        color: #555;
+      }
+
+      .game-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .game-tags span {
+        background-color: #f3e8ff; /* Jasny fiolet */
+        color: #6b21a8; /* Ciemny fiolet */
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .game-tags span:nth-child(2) {
+        /* Fokus */
+        background-color: #e0f2fe; /* Jasny niebieski */
+        color: #1e40af; /* Ciemny niebieski */
+      }
+
+      .game-tags span:nth-child(3) {
+        /* Gracze */
+        background-color: #dcfce7; /* Jasny zielony */
+        color: #166534; /* Ciemny zielony */
+      }
+
+      .toggle-button {
+        background: linear-gradient(
+          to right,
+          #8b5cf6,
+          #ec4899
+        ); /* Gradient na przycisku */
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: 700;
+        margin-top: auto; /* Przycisk zawsze na dole karty */
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        width: 100%; /* Przycisk na całą szerokość */
+      }
+
+      .toggle-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      .no-games-message {
+        grid-column: 1 / -1; /* Rozciągnij na całą szerokość siatki */
+        text-align: center;
+        font-size: 1.8em;
+        color: #777;
+        padding: 50px;
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Responsywność */
+      @media (max-width: 768px) {
+        header h1 {
+          font-size: 2.5em;
+        }
+        header p {
+          font-size: 1em;
+        }
+        .filters-section {
+          grid-template-columns: 1fr;
+        }
+        .game-list {
+          grid-template-columns: 1fr;
+        }
+        .game-card h2 {
+          font-size: 1.6em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Katalog Gier Improwizacyjnych</h1>
+        <p>
+          Odkryj fascynujący świat improwizacji i znajdź idealną grę dla swojej
+          grupy!
+        </p>
+      </header>
+
+      <section class="filters-section">
+        <div class="filter-group">
+          <label for="search">Szukaj gry:</label>
+          <input
+            type="text"
+            id="search"
+            placeholder="Wpisz nazwę lub opis..."
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="category">Kategoria:</label>
+          <select id="category">
+            <option value="">Wszystkie</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="focus">Główny Fokus:</label>
+          <select id="focus">
+            <option value="">Wszystkie</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="minPlayers">Min. graczy:</label>
+          <select id="minPlayers">
+            <option value="">Wszystkie</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="game-list" id="gameList">
+        <!-- Gry będą ładowane tutaj przez JavaScript -->
+        <div class="no-games-message" id="noGamesMessage" style="display: none">
+          Brak gier spełniających kryteria wyszukiwania. Spróbuj zmienić filtry!
+        </div>
+      </section>
+    </div>
+
+    <script>
+      let allGames = [] // Przechowuje wszystkie gry
+      let expandedGames = {} // Przechowuje stan rozwinięcia kart
+
+      const searchInput = document.getElementById("search")
+      const categorySelect = document.getElementById("category")
+      const focusSelect = document.getElementById("focus")
+      const minPlayersSelect = document.getElementById("minPlayers")
+      const gameListContainer = document.getElementById("gameList")
+      const noGamesMessage = document.getElementById("noGamesMessage")
+
+      // Funkcja do pobierania danych
+      async function fetchGames() {
+        try {
+          // Ścieżka do pliku JSON. Musi być w tym samym katalogu co index.html
+          const response = await fetch("impro_games_cleaned.json")
+          if (!response.ok) {
+            // Dodano bardziej szczegółowy komunikat błędu
+            throw new Error(
+              `Nie udało się załadować pliku danych: ${response.status} ${response.statusText}. Upewnij się, że 'impro_games_cleaned.json' znajduje się obok 'index.html'.`
+            )
+          }
+          const data = await response.json()
+          allGames = data
+          populateFilters()
+          renderGames()
+        } catch (error) {
+          gameListContainer.innerHTML = `<div class="no-games-message">Wystąpił błąd podczas ładowania danych: <br>${error.message}</div>`
+          console.error("Błąd ładowania danych:", error)
+        }
+      }
+
+      // Funkcja do wypełniania filtrów unikalnymi wartościami
+      function populateFilters() {
+        const categories = [
+          ...new Set(allGames.map((game) => game.kategoria)),
+        ].sort()
+        const focuses = [
+          ...new Set(allGames.map((game) => game.glowny_fokus)),
+        ].sort()
+        const maxPlayers =
+          allGames.length > 0
+            ? Math.max(...allGames.map((game) => game.minimalna_liczba_graczy))
+            : 0
+
+        categories.forEach((cat) => {
+          const option = document.createElement("option")
+          option.value = cat
+          option.textContent = cat
+          categorySelect.appendChild(option)
+        })
+
+        focuses.forEach((foc) => {
+          const option = document.createElement("option")
+          option.value = foc
+          option.textContent = foc
+          focusSelect.appendChild(option)
+        })
+
+        for (let i = 1; i <= maxPlayers; i++) {
+          const option = document.createElement("option")
+          option.value = i
+          option.textContent = `${i}+`
+          minPlayersSelect.appendChild(option)
+        }
+      }
+
+      // Funkcja do renderowania gier
+      function renderGames() {
+        gameListContainer.innerHTML = "" // Wyczyść listę przed ponownym renderowaniem
+
+        const searchTerm = searchInput.value.toLowerCase()
+        const selectedCategory = categorySelect.value
+        const selectedFocus = focusSelect.value
+        const minPlayers = parseInt(minPlayersSelect.value) || 0
+
+        const filteredGames = allGames.filter((game) => {
+          const matchesSearch =
+            game.nazwa.toLowerCase().includes(searchTerm) ||
+            game.nazwa_ang.toLowerCase().includes(searchTerm) ||
+            game.opis.toLowerCase().includes(searchTerm) ||
+            game.opis_ang.toLowerCase().includes(searchTerm)
+
+          const matchesCategory = selectedCategory
+            ? game.kategoria === selectedCategory
+            : true
+          const matchesFocus = selectedFocus
+            ? game.glowny_fokus === selectedFocus
+            : true
+          const matchesMinPlayers = minPlayers
+            ? game.minimalna_liczba_graczy >= minPlayers
+            : true
+
+          return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesFocus &&
+            matchesMinPlayers
+          )
+        })
+
+        if (filteredGames.length === 0) {
+          noGamesMessage.style.display = "block"
+          return
+        } else {
+          noGamesMessage.style.display = "none"
+        }
+
+        filteredGames.forEach((game) => {
+          const gameCard = document.createElement("div")
+          gameCard.classList.add("game-card")
+
+          const isExpanded = expandedGames[game.nr_katalogowy]
+
+          gameCard.innerHTML = `
+                    <h2>${game.nazwa}</h2>
+                    ${
+                      isExpanded
+                        ? `<p class="english-name">(${game.nazwa_ang})</p>`
+                        : ""
+                    }
+                    <p>${game.opis}</p>
+
+                    ${
+                      isExpanded
+                        ? `
+                        <div class="game-details-en">
+                            <h3>Szczegóły (EN):</h3>
+                            <p><strong>Nazwa EN:</strong> ${game.nazwa_ang}</p>
+                            <p><strong>Opis EN:</strong> ${game.opis_ang}</p>
+                        </div>
+                    `
+                        : ""
+                    }
+
+                    <div class="game-tags">
+                        <span>Kategoria: ${game.kategoria}</span>
+                        <span>Fokus: ${game.glowny_fokus}</span>
+                        <span>Min. graczy: ${
+                          game.minimalna_liczba_graczy
+                        }</span>
+                    </div>
+                    <button class="toggle-button" data-id="${
+                      game.nr_katalogowy
+                    }">
+                        ${isExpanded ? "Pokaż mniej" : "Pokaż szczegóły (EN)"}
+                    </button>
+                `
+          gameListContainer.appendChild(gameCard)
+        })
+
+        // Dodaj nasłuchiwanie zdarzeń do nowo utworzonych przycisków
+        document.querySelectorAll(".toggle-button").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            const gameId = event.target.dataset.id
+            expandedGames = {
+              ...expandedGames,
+              [gameId]: !expandedGames[gameId],
+            }
+            renderGames() // Ponowne renderowanie po zmianie stanu
+          })
+        })
+      }
+
+      // Nasłuchiwanie zmian w filtrach
+      searchInput.addEventListener("input", renderGames)
+      categorySelect.addEventListener("change", renderGames)
+      focusSelect.addEventListener("change", renderGames)
+      minPlayersSelect.addEventListener("change", renderGames)
+
+      // Inicjalizacja: pobierz dane po załadowaniu strony
+      document.addEventListener("DOMContentLoaded", fetchGames)
+    </script>
+  </body>
+</html>
