@@ -478,6 +478,15 @@
         padding: 20px;
       }
 
+      .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-gray);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: var(--light-gray);
+      }
+
       .export-options {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -839,6 +848,10 @@
             </div>
           </div>
         </div>
+        <div class="modal-footer">
+          <button class="export-btn secondary" id="modalCancelBtn">Anuluj</button>
+          <button class="export-btn" id="modalConfirmBtn">Eksportuj</button>
+        </div>
       </div>
     </div>
 
@@ -1107,46 +1120,36 @@
         filterToggle.addEventListener("click", toggleFilters)
 
         // Sort functionality
-        sortSelect.removeEventListener("change", handleSort) // Prevent duplicate listeners
         sortSelect.addEventListener("change", handleSort)
 
         // Export functionality
         document.querySelectorAll(".export-option").forEach((option) => {
-          option.removeEventListener("click", handleExportType) // Prevent duplicate listeners
           option.addEventListener("click", handleExportType)
         })
 
-        document
-          .getElementById("exportBtn")
-          .removeEventListener("click", showExportModal)
         document
           .getElementById("exportBtn")
           .addEventListener("click", showExportModal)
 
         document
           .getElementById("clearSelection")
-          .removeEventListener("click", clearSelection)
-        document
-          .getElementById("clearSelection")
           .addEventListener("click", clearSelection)
 
-        // Modal
-        document
-          .getElementById("modalClose")
-          .removeEventListener("click", hideExportModal)
+        // Modal Buttons
         document
           .getElementById("modalClose")
           .addEventListener("click", hideExportModal)
-
-        exportModal.removeEventListener("click", (e) => {
-          // Using anonymous function, need to manage carefully or separate
-          if (e.target === exportModal) hideExportModal()
+        document
+          .getElementById("modalCancelBtn")
+          .addEventListener("click", hideExportModal)
+        document.getElementById("modalConfirmBtn").addEventListener("click", () => {
+          handleExport()
+          hideExportModal()
         })
-        // Re-add modal overlay listener specifically to avoid issues if it's removed and re-added.
-        // A better way is to check if it's already listening. For simplicity, just re-add it like others.
-        // Alternatively, define a named function for the overlay click.
+
+        // Modal Overlay
+        // Add a flag to prevent multiple listeners on overlay
         if (!exportModal._overlayListener) {
-          // Add a flag to prevent multiple listeners on overlay
           exportModal._overlayListener = (e) => {
             if (e.target === exportModal) hideExportModal()
           }
@@ -1474,12 +1477,7 @@
 
       function hideExportModal() {
         exportModal.style.display = "none"
-        // handleExport() is called when the user clicks 'Eksportuj' and then closes modal,
-        // or when they click X or outside. Let's make sure it's only called on a definitive export action.
-        // For now, it's called on modal close, which might be okay.
-        // If you want "Export" button in modal to trigger it, move handleExport() call there.
-        // For now, keeping current behavior.
-        handleExport()
+        // handleExport() is now called by the modal's confirm button.
       }
 
       function handleExport() {
