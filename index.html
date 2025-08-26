@@ -478,6 +478,15 @@
         padding: 20px;
       }
 
+      .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-gray);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: var(--light-gray);
+      }
+
       .export-options {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -551,11 +560,41 @@
         background: var(--primary-black);
         color: var(--primary-white);
         border: none;
-        font-size: 18px;
         cursor: pointer;
         z-index: 150;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         touch-action: manipulation;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Toast Notification */
+      .toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: var(--primary-black);
+        color: var(--primary-white);
+        text-align: center;
+        border-radius: 4px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1100;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 30px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0;
+        transition: opacity 0.3s, bottom 0.3s;
+      }
+
+      .toast.show {
+        visibility: visible;
+        opacity: 1;
+        bottom: 50px;
       }
 
       /* LOADING STATE */
@@ -741,6 +780,9 @@
           </div>
         </div>
 
+        <div class="filters-section" style="padding-top: 0; border-top: none;">
+          <button class="export-btn secondary" id="clearFiltersBtn" style="width: 100%; text-align: center;">Wyczyść filtry</button>
+        </div>
         <div class="sort-container">
           <span class="sort-label">Sortowanie:</span>
           <select class="sort-select" id="sortSelect">
@@ -776,7 +818,21 @@
     </div>
 
     <!-- Filter FAB for mobile -->
-    <button class="filter-fab" id="filterFab">⚙</button>
+    <button class="filter-fab" id="filterFab">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+    </button>
 
     <!-- Export Modal -->
     <div class="modal-overlay" id="exportModal">
@@ -839,8 +895,15 @@
             </div>
           </div>
         </div>
+        <div class="modal-footer">
+          <button class="export-btn secondary" id="modalCancelBtn">Anuluj</button>
+          <button class="export-btn" id="modalConfirmBtn">Eksportuj</button>
+        </div>
       </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script>
       /*
@@ -1100,53 +1163,48 @@
       // Basic event listeners setup (doesn't depend on dynamic filters)
       function setupBasicEventListeners() {
         // Search functionality
-        searchInput.addEventListener("input", handleSearch)
+        searchInput.addEventListener("input", debounce(filterAndSort))
         searchClear.addEventListener("click", clearSearch)
 
         // Filter toggle
         filterToggle.addEventListener("click", toggleFilters)
+        document.getElementById("filterFab").addEventListener("click", toggleFilters)
 
         // Sort functionality
-        sortSelect.removeEventListener("change", handleSort) // Prevent duplicate listeners
         sortSelect.addEventListener("change", handleSort)
 
         // Export functionality
         document.querySelectorAll(".export-option").forEach((option) => {
-          option.removeEventListener("click", handleExportType) // Prevent duplicate listeners
           option.addEventListener("click", handleExportType)
         })
 
-        document
-          .getElementById("exportBtn")
-          .removeEventListener("click", showExportModal)
         document
           .getElementById("exportBtn")
           .addEventListener("click", showExportModal)
 
         document
           .getElementById("clearSelection")
-          .removeEventListener("click", clearSelection)
-        document
-          .getElementById("clearSelection")
           .addEventListener("click", clearSelection)
 
-        // Modal
         document
-          .getElementById("modalClose")
-          .removeEventListener("click", hideExportModal)
+          .getElementById("clearFiltersBtn")
+          .addEventListener("click", clearAllFilters)
+
+        // Modal Buttons
         document
           .getElementById("modalClose")
           .addEventListener("click", hideExportModal)
-
-        exportModal.removeEventListener("click", (e) => {
-          // Using anonymous function, need to manage carefully or separate
-          if (e.target === exportModal) hideExportModal()
+        document
+          .getElementById("modalCancelBtn")
+          .addEventListener("click", hideExportModal)
+        document.getElementById("modalConfirmBtn").addEventListener("click", () => {
+          handleExport()
+          hideExportModal()
         })
-        // Re-add modal overlay listener specifically to avoid issues if it's removed and re-added.
-        // A better way is to check if it's already listening. For simplicity, just re-add it like others.
-        // Alternatively, define a named function for the overlay click.
+
+        // Modal Overlay
+        // Add a flag to prevent multiple listeners on overlay
         if (!exportModal._overlayListener) {
-          // Add a flag to prevent multiple listeners on overlay
           exportModal._overlayListener = (e) => {
             if (e.target === exportModal) hideExportModal()
           }
@@ -1171,13 +1229,30 @@
         filtersContent.classList.toggle("open", filtersOpen)
       }
 
-      function handleSearch(e) {
-        filterAndSort()
+      function debounce(func, delay = 300) {
+        let timeout
+        return (...args) => {
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+            func.apply(this, args)
+          }, delay)
+        }
       }
 
       function clearSearch() {
         searchInput.value = ""
         filterAndSort()
+      }
+
+      function clearAllFilters() {
+        document.querySelectorAll('.filters').forEach(group => {
+          group.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+          const allButton = group.querySelector('[data-filter="all"]');
+          if (allButton) {
+            allButton.classList.add('active');
+          }
+        });
+        filterAndSort();
       }
 
       function filterGames(searchTerm, filters) {
@@ -1474,12 +1549,7 @@
 
       function hideExportModal() {
         exportModal.style.display = "none"
-        // handleExport() is called when the user clicks 'Eksportuj' and then closes modal,
-        // or when they click X or outside. Let's make sure it's only called on a definitive export action.
-        // For now, it's called on modal close, which might be okay.
-        // If you want "Export" button in modal to trigger it, move handleExport() call there.
-        // For now, keeping current behavior.
-        handleExport()
+        // handleExport() is now called by the modal's confirm button.
       }
 
       function handleExport() {
@@ -1546,18 +1616,18 @@
           .join("\n---\n")
       }
 
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
       function showExportSuccess(message) {
-        const exportBtn = document.getElementById("exportBtn")
-        const originalText = exportBtn.textContent
-        const originalBackground = exportBtn.style.background
-
-        exportBtn.textContent = "✓ Eksportowano"
-        exportBtn.style.background = "var(--success-green)"
-
-        setTimeout(() => {
-          exportBtn.textContent = originalText
-          exportBtn.style.background = originalBackground // Revert to original background
-        }, 2000)
+        showToast(message)
       }
 
       function clearSelection() {
