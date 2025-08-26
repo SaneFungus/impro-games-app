@@ -74,6 +74,8 @@
         padding: 15px;
         border-bottom: 1px solid var(--border-gray);
         background: var(--light-gray);
+        position: sticky;
+        z-index: 99;
       }
 
       .search-container {
@@ -141,6 +143,8 @@
       .filters-container {
         background: var(--primary-white);
         border-bottom: 1px solid var(--border-gray);
+        position: sticky;
+        z-index: 98;
       }
 
       .filter-toggle {
@@ -1006,6 +1010,36 @@
       const exportBar = document.getElementById("exportBar")
       const exportModal = document.getElementById("exportModal")
 
+      function setupStickyElements() {
+        const header = document.querySelector('.header');
+        const search = document.querySelector('.search-section');
+        const filters = document.querySelector('.filters-container');
+
+        if (!header || !search || !filters) {
+          console.warn("Could not find all sticky elements for setup.");
+          return;
+        }
+
+        const updatePositions = () => {
+          const headerHeight = header.offsetHeight;
+          search.style.top = `${headerHeight}px`;
+          filters.style.top = `${headerHeight + search.offsetHeight}px`;
+        };
+
+        // Use ResizeObserver for performance, with a fallback to the resize event
+        if ('ResizeObserver' in window) {
+          const observer = new ResizeObserver(debounce(updatePositions, 50));
+          // Observing document.body is a simple way to react to most layout changes
+          observer.observe(document.body);
+        } else {
+          window.addEventListener('resize', debounce(updatePositions, 100));
+        }
+
+        // Initial calls to set positions
+        updatePositions();
+        setTimeout(updatePositions, 300); // A second call to handle late-loading fonts
+      }
+
       // Initialize application
       async function init() {
         // Made init async
@@ -1029,6 +1063,7 @@
         updateFiltersFromData() // Generate dynamic filters based on potentially loaded data
         setupBasicEventListeners() // Setup listeners that don't depend on dynamic content
         setupFilterEventListeners() // Setup listeners for dynamic filters
+        setupStickyElements(); // Make the filter bar sticky
         filterAndSort() // Initial render of games with current filters and sort
         updateCounts()
       }
