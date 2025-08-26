@@ -880,7 +880,7 @@
                 id="includeEnglish"
               />
               <label class="export-setting-label" for="includeEnglish"
-                >Nazwy angielskie</label
+                >Pokaż angielskie nazwy i opisy</label
               >
             </div>
             <div class="export-setting">
@@ -1605,9 +1605,15 @@
             let text = ""
             if (includeNumbers) text += `${game.nr_katalogowy}. `
             text += game.nazwa
-            if (includeEng && game.nazwa_ang) text += ` (${game.nazwa_ang})` // Only add if nazwa_ang exists
+            if (includeEng && game.nazwa_ang) text += ` (${game.nazwa_ang})`
             text += "\n"
-            if (includeDesc && game.opis) text += `${game.opis}\n` // Only add if opis exists
+            if (includeDesc) {
+              if (includeEng && game.opis_ang) {
+                text += `${game.opis_ang}\n`
+              } else if (game.opis) {
+                text += `${game.opis}\n`
+              }
+            }
             text += `Graczy: ${game.minimalna_liczba_graczy}+\n`
             text += `Kategoria: ${game.kategoria}\n`
             text += `Fokus: ${game.glowny_fokus}\n`
