@@ -33,13 +33,22 @@
       }
 
       /* MOBILE-FIRST HEADER */
+      .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        transition: transform 0.3s ease-in-out;
+        will-change: transform;
+      }
+
+      .top-bar.hidden {
+        transform: translateY(-100%);
+      }
+
       .header {
         border-bottom: 1px solid var(--primary-black);
         padding: 20px 15px;
         background: var(--primary-white);
-        position: sticky;
-        top: 0;
-        z-index: 100;
       }
 
       .header-content {
@@ -74,8 +83,6 @@
         padding: 15px;
         border-bottom: 1px solid var(--border-gray);
         background: var(--light-gray);
-        position: sticky;
-        z-index: 99;
       }
 
       .search-container {
@@ -143,8 +150,6 @@
       .filters-container {
         background: var(--primary-white);
         border-bottom: 1px solid var(--border-gray);
-        position: sticky;
-        z-index: 98;
       }
 
       .filter-toggle {
@@ -706,97 +711,99 @@
     </style>
   </head>
   <body>
-    <header class="header">
-      <div class="header-content">
-        <h1>
-          impro<br />
-          <span class="red-accent">games</span>
-        </h1>
-        <div class="header-stats">
-          Baza gier improwizacyjnych<br />
-          <span class="red-accent" id="totalGames">5</span> pozycji<br />
-          Mobile 2024
-        </div>
-      </div>
-    </header>
-
-    <section class="search-section">
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Szukaj gry..."
-            id="searchInput"
-          />
-          <button class="search-clear" id="searchClear">×</button>
-        </div>
-
-        <div class="search-meta">
-          <span>Szukaj w nazwach i opisach</span>
-          <span class="results-count" id="resultsCount">5 gier</span>
-        </div>
-      </div>
-    </section>
-
-    <div class="filters-container">
-      <button class="filter-toggle" id="filterToggle">
-        <span>Filtry i sortowanie</span>
-        <span class="filter-toggle-icon">▼</span>
-      </button>
-
-      <div class="filters-content" id="filtersContent">
-        <div class="filters-section">
-          <div class="filters-label">Kategorie</div>
-          <div class="filters" id="categoryFilters">
-            <button class="filter-btn active" data-filter="all">
-              wszystkie
-            </button>
-            <button class="filter-btn" data-filter="collaboration">
-              współpraca
-            </button>
-            <button class="filter-btn" data-filter="energy">energia</button>
-            <button class="filter-btn" data-filter="storytelling">
-              opowiadanie
-            </button>
-            <button class="filter-btn" data-filter="character">postać</button>
-            <button class="filter-btn" data-filter="communication">
-              komunikacja
-            </button>
+    <div class="top-bar">
+      <header class="header">
+        <div class="header-content">
+          <h1>
+            impro<br />
+            <span class="red-accent">games</span>
+          </h1>
+          <div class="header-stats">
+            Baza gier improwizacyjnych<br />
+            <span class="red-accent" id="totalGames">5</span> pozycji<br />
+            Mobile 2024
           </div>
         </div>
+      </header>
 
-        <div class="filters-section">
-          <div class="filters-label">Główny Fokus</div>
-          <div class="filters" id="focusFilters">
-            <button class="filter-btn active" data-filter="all">
-              wszystkie
-            </button>
+      <section class="search-section">
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Szukaj gry..."
+              id="searchInput"
+            />
+            <button class="search-clear" id="searchClear">×</button>
+          </div>
+
+          <div class="search-meta">
+            <span>Szukaj w nazwach i opisach</span>
+            <span class="results-count" id="resultsCount">5 gier</span>
           </div>
         </div>
-        <div class="filters-section">
-          <div class="filters-label">Liczba graczy</div>
-          <div class="filters" id="playerFilters">
-            <button class="filter-btn active" data-filter="all">wszyscy</button>
-            <button class="filter-btn" data-filter="2">2 graczy</button>
-            <button class="filter-btn" data-filter="3-5">3-5 graczy</button>
-            <button class="filter-btn" data-filter="6+">6+ graczy</button>
-          </div>
-        </div>
+      </section>
 
-        <div class="filters-section" style="padding-top: 0; border-top: none;">
-          <button class="export-btn secondary" id="clearFiltersBtn" style="width: 100%; text-align: center;">Wyczyść filtry</button>
-        </div>
-        <div class="sort-container">
-          <span class="sort-label">Sortowanie:</span>
-          <select class="sort-select" id="sortSelect">
-            <option value="nr_katalogowy">Numer katalogowy</option>
-            <option value="nazwa">Nazwa A-Z</option>
-            <option value="nazwa-desc">Nazwa Z-A</option>
-            <option value="players">Liczba graczy</option>
-            <option value="kategoria">Kategoria</option>
-            <option value="fokus">Główny fokus</option>
-          </select>
+      <div class="filters-container">
+        <button class="filter-toggle" id="filterToggle">
+          <span>Filtry i sortowanie</span>
+          <span class="filter-toggle-icon">▼</span>
+        </button>
+
+        <div class="filters-content" id="filtersContent">
+          <div class="filters-section">
+            <div class="filters-label">Kategorie</div>
+            <div class="filters" id="categoryFilters">
+              <button class="filter-btn active" data-filter="all">
+                wszystkie
+              </button>
+              <button class="filter-btn" data-filter="collaboration">
+                współpraca
+              </button>
+              <button class="filter-btn" data-filter="energy">energia</button>
+              <button class="filter-btn" data-filter="storytelling">
+                opowiadanie
+              </button>
+              <button class="filter-btn" data-filter="character">postać</button>
+              <button class="filter-btn" data-filter="communication">
+                komunikacja
+              </button>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <div class="filters-label">Główny Fokus</div>
+            <div class="filters" id="focusFilters">
+              <button class="filter-btn active" data-filter="all">
+                wszystkie
+              </button>
+            </div>
+          </div>
+          <div class="filters-section">
+            <div class="filters-label">Liczba graczy</div>
+            <div class="filters" id="playerFilters">
+              <button class="filter-btn active" data-filter="all">wszyscy</button>
+              <button class="filter-btn" data-filter="2">2 graczy</button>
+              <button class="filter-btn" data-filter="3-5">3-5 graczy</button>
+              <button class="filter-btn" data-filter="6+">6+ graczy</button>
+            </div>
+          </div>
+
+          <div class="filters-section" style="padding-top: 0; border-top: none;">
+            <button class="export-btn secondary" id="clearFiltersBtn" style="width: 100%; text-align: center;">Wyczyść filtry</button>
+          </div>
+          <div class="sort-container">
+            <span class="sort-label">Sortowanie:</span>
+            <select class="sort-select" id="sortSelect">
+              <option value="nr_katalogowy">Numer katalogowy</option>
+              <option value="nazwa">Nazwa A-Z</option>
+              <option value="nazwa-desc">Nazwa Z-A</option>
+              <option value="players">Liczba graczy</option>
+              <option value="kategoria">Kategoria</option>
+              <option value="fokus">Główny fokus</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -1010,34 +1017,27 @@
       const exportBar = document.getElementById("exportBar")
       const exportModal = document.getElementById("exportModal")
 
-      function setupStickyElements() {
-        const header = document.querySelector('.header');
-        const search = document.querySelector('.search-section');
-        const filters = document.querySelector('.filters-container');
+      function setupAutoHideHeader() {
+        let lastScrollY = window.scrollY;
+        const topBar = document.querySelector('.top-bar');
+        if (!topBar) return;
 
-        if (!header || !search || !filters) {
-          console.warn("Could not find all sticky elements for setup.");
-          return;
-        }
+        // Use a small threshold to avoid hiding on tiny scrolls at top
+        const threshold = 50;
 
-        const updatePositions = () => {
-          const headerHeight = header.offsetHeight;
-          search.style.top = `${headerHeight}px`;
-          filters.style.top = `${headerHeight + search.offsetHeight}px`;
-        };
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
 
-        // Use ResizeObserver for performance, with a fallback to the resize event
-        if ('ResizeObserver' in window) {
-          const observer = new ResizeObserver(debounce(updatePositions, 50));
-          // Observing document.body is a simple way to react to most layout changes
-          observer.observe(document.body);
-        } else {
-          window.addEventListener('resize', debounce(updatePositions, 100));
-        }
+            if (currentScrollY > lastScrollY && currentScrollY > threshold) {
+                // Scrolling down
+                topBar.classList.add('hidden');
+            } else {
+                // Scrolling up or at the top
+                topBar.classList.remove('hidden');
+            }
 
-        // Initial calls to set positions
-        updatePositions();
-        setTimeout(updatePositions, 300); // A second call to handle late-loading fonts
+            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+        }, { passive: true });
       }
 
       // Initialize application
@@ -1063,7 +1063,7 @@
         updateFiltersFromData() // Generate dynamic filters based on potentially loaded data
         setupBasicEventListeners() // Setup listeners that don't depend on dynamic content
         setupFilterEventListeners() // Setup listeners for dynamic filters
-        setupStickyElements(); // Make the filter bar sticky
+        setupAutoHideHeader() // Setup auto-hiding header
         filterAndSort() // Initial render of games with current filters and sort
         updateCounts()
       }
